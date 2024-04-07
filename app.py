@@ -3,33 +3,8 @@ import os
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton
 import pyqtgraph as pg
 import numpy as np
-import uproot
+from DataReader import DataReader
 
-
-class DataReader:
-    def __init__(self, filenames):
-        self.filenames = filenames
-        self.current_index = 0
-
-    def read_data(self):
-        filename = self.filenames[self.current_index]
-        targettree = uproot.open(filename)['QA_ana']
-        gvx = targettree['gvx'].arrays(library='np')['gvx']
-        gvy = targettree['gvy'].arrays(library='np')['gvy']
-        gvz = targettree['gvz'].arrays(library='np')['gvz']
-
-        vtx0 = [sublist[0] for sublist in gvx]
-        vtx1 = [sublist[1] for sublist in gvx]
-        vty0 = [sublist[0] for sublist in gvy]
-        vty1 = [sublist[1] for sublist in gvy]
-        vtz0 = [sublist[0] for sublist in gvz]
-        vtz1 = [sublist[1] for sublist in gvz]
-
-        vtx_data = np.array([vtx0, vtx1, vty0, vty1, vtz0, vtz1]).T
-        return vtx_data
-    
-    def next_file(self):
-        self.current_index = (self.current_index + 1) % len(self.filenames)
 
 
 class HistogramPlot(QWidget):
@@ -65,9 +40,9 @@ class Tab1(QWidget):
         self.data_reader = None
         self.plot_data = None
         self.previous_plot_data = None
-
+        
         filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
-        self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames])
+        self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"VERTEX")
         self.plot_data = self.data_reader.read_data()
 
         self.histogram_plot = HistogramPlot(self.plot_data, np.zeros_like(self.plot_data))
