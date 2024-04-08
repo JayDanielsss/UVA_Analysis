@@ -1,17 +1,40 @@
 import sys
 import os
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
 import pyqtgraph as pg
 import numpy as np
 from DataReader import DataReader
 
 
-
-class HistogramPlot(QWidget):
-    def __init__(self, vtx_data, previous_data=None):
+class StaticHistogram(QWidget):
+    def __init__(self,data):
         super().__init__()
         layout = QHBoxLayout()
         self.setLayout(layout)
+        self.plot_widgets = []
+
+        self.plot_data = data
+        
+        self.create_histograms()
+
+    def create_histograms(self):
+        for plot_data, color in zip([self.plot_data], [(0, 0, 255, 150)]):
+            
+            plot_layout = QVBoxLayout()
+            plot_widget = pg.PlotWidget()
+            hist, bins = np.histogram(plot_data[:,0], bins=50)
+            plot_widget.plot(bins, hist, stepMode=True, fillLevel=0, brush=color)
+            plot_layout.addWidget(plot_widget)
+            self.plot_widgets.append(plot_widget)
+            self.layout().addLayout(plot_layout)
+
+            
+        
+class HistogramComparisonPlot(QWidget):
+    def __init__(self, vtx_data, previous_data=None):
+        super().__init__()
+        #layout = QHBoxLayout()
+        #self.setLayout(layout)
         self.plot_widgets = []
 
         self.plot_data = vtx_data
@@ -21,20 +44,20 @@ class HistogramPlot(QWidget):
 
     def create_histograms(self):
         for data, color in zip([self.plot_data, self.previous_plot_data], [(0, 0, 255, 150), (255, 0, 0, 150)]):
-            plot_layout = QVBoxLayout()
-            for i in range(3):
-                plot_widget = pg.PlotWidget()
-                hist, bins = np.histogram(data[:, i], bins=50)
-                plot_widget.plot(bins, hist, stepMode=True, fillLevel=0, brush=color)
-                plot_layout.addWidget(plot_widget)
-                self.plot_widgets.append(plot_widget)
-            self.layout().addLayout(plot_layout)
+            #plot_layout = QVBoxLayout()
+            
+            plot_widget = pg.PlotWidget()
+            hist, bins = np.histogram(data[:,0], bins=50)
+            plot_widget.plot(bins, hist, stepMode=True, fillLevel=0, brush=color)
+            #plot_layout.addWidget(plot_widget)
+            self.plot_widgets.append(plot_widget)
+            #self.layout().addLayout(plot_layout)
 
 
 class Tab1(QWidget):
     def __init__(self):
         super().__init__()
-        layout = QVBoxLayout()
+        layout = QGridLayout()
         self.setLayout(layout)
 
         self.data_reader = None
@@ -45,13 +68,19 @@ class Tab1(QWidget):
         self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"VERTEX")
         self.plot_data = self.data_reader.read_data()
 
-        self.histogram_plot = HistogramPlot(self.plot_data, np.zeros_like(self.plot_data))
-        layout.addWidget(self.histogram_plot)
+        #self.histogram_plot = HistogramComparisonPlot(self.plot_data, np.zeros_like(self.plot_data))
+        #layout.addWidget(self.histogram_plot)
+        
+        self.momentumPlot = StaticHistogram(self.plot_data)
+        layout.addWidget(self.momentumPlot,0,0)
+
+        self.momentumPlot2 = StaticHistogram(self.plot_data)
+        layout.addWidget(self.momentumPlot2,3,0)
 
         # Add update button
         self.update_button = QPushButton("Update")
         self.update_button.clicked.connect(self.update_plots)
-        layout.addWidget(self.update_button)
+        layout.addWidget(self.update_button,3,3)
 
     def update_plots(self):
         if self.data_reader:
@@ -59,6 +88,7 @@ class Tab1(QWidget):
             self.data_reader.next_file()
             self.plot_data = self.data_reader.read_data()
             self.histogram_plot = HistogramPlot(self.plot_data, self.previous_plot_data)
+
             layout = self.layout()
             layout.replaceWidget(layout.itemAt(0).widget(), self.histogram_plot)
             layout.addWidget(self.update_button)
