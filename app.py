@@ -6,6 +6,7 @@ import numpy as np
 from DataReader import DataReader
 
 
+
 class StaticHistogram(QWidget):
     def __init__(self,data):
         super().__init__()
@@ -48,7 +49,29 @@ class StaticHistogram(QWidget):
             self.plot_widgets.append(plot_widget3)
             self.layout().addLayout(plot_layout)
 
-            
+class ScatterPlot(QWidget):
+    def __init__(self, elemID, detID):
+        super().__init__()
+        self.elemID = elemID
+        self.detID = detID
+        self.create_scatter_plot()
+
+    def create_scatter_plot(self):
+        # Create a PlotWidget
+        self.plot_widget = pg.PlotWidget()
+
+        # Generate some random data for the scatter plot
+        x = np.random.normal(size=100)
+        y = np.random.normal(size=100)
+
+        # Plot the scatter plot
+        scatter = pg.ScatterPlotItem(x=x, y=y, pen=None, brush='r')
+        self.plot_widget.addItem(scatter)
+
+        # Add the PlotWidget directly to the layout
+        layout = QHBoxLayout()
+        layout.addWidget(self.plot_widget)
+        self.setLayout(layout)
         
 class HistogramComparisonPlot(QWidget):
     def __init__(self, vtx_data, previous_data=None):
@@ -90,8 +113,17 @@ class Tab1(QWidget):
         self.plot_data = self.data_reader.read_data()
         
         self.momentumPlot = StaticHistogram(self.plot_data)
-        layout.addWidget(self.momentumPlot,0,0)
+        layout.addWidget(self.momentumPlot,1,0)
+
         
+        #Hitmatrix Plot
+        filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
+        self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"HIT")
+        self.plot_data = self.data_reader.read_data()
+
+
+        scatter_plot = ScatterPlot(self.plot_data[0],self.plot_data[1])
+        layout.addWidget(scatter_plot, 0,0) 
 
         #vertex
         #filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
