@@ -9,10 +9,11 @@ class DataReader:
         self.grab = grab
 
     def read_data(self):
-        filename = self.filenames[self.current_index]
-        targettree = uproot.open(filename)['QA_ana']
+        
 
         if self.grab == "VERTEX":
+            filename = self.filenames[self.current_index]
+            targettree = uproot.open(filename)['QA_ana']
             gvx = targettree['gvx'].arrays(library='np')['gvx']
             gvy = targettree['gvy'].arrays(library='np')['gvy']
             gvz = targettree['gvz'].arrays(library='np')['gvz']
@@ -28,14 +29,41 @@ class DataReader:
             
             return vtx_data
         elif self.grab == "HIT":
-
+            filename = self.filenames[self.current_index]
+            targettree = uproot.open(filename)['QA_ana']
             elementid=targettree["elementID"].arrays(library="np")["elementID"]
             detectorid=targettree["detectorID"].arrays(library="np")["detectorID"]
 
             return elementid, detectorid
+        
+        elif self.grab == "MOMENTUM":
+            
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            print(filename)
+            px = np.concatenate((reco[15][reco[15] < 1e6],reco[18][reco[18] < 1e6]))
+            py = np.concatenate((reco[16][reco[16] < 1e6],reco[19][reco[19] < 1e6]))
+            pz = np.concatenate((reco[17][reco[17] < 1e6],reco[20][reco[20] < 1e6]))                   
+            return px, py, pz            
+            
         else:
             print("DATA NOT SENT!")
     
     def next_file(self):
         self.current_index = (self.current_index + 1) % len(self.filenames)
 
+#For Testing
+
+# import sys
+# import os
+# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
+# plot_data = data_reader.read_data()
+
+# import matplotlib.pyplot as plt
+
+# plt.hist(plot_data[0],10)
+
+# plt.show()
+
+# print(np.mean(plot_data[0]))

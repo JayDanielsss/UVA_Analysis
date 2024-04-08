@@ -20,12 +20,32 @@ class StaticHistogram(QWidget):
     def create_histograms(self):
         for plot_data, color in zip([self.plot_data], [(0, 0, 255, 150)]):
             
-            plot_layout = QVBoxLayout()
+            plot_layout = QHBoxLayout()
             plot_widget = pg.PlotWidget()
-            hist, bins = np.histogram(plot_data[:,0], bins=50)
+            hist, bins = np.histogram(plot_data[0], bins=10)
             plot_widget.plot(bins, hist, stepMode=True, fillLevel=0, brush=color)
             plot_layout.addWidget(plot_widget)
+            plot_widget.setTitle("PX = {}".format(np.mean(plot_data[0])))
             self.plot_widgets.append(plot_widget)
+            self.layout().addLayout(plot_layout)
+
+         
+
+
+            plot_widget2 = pg.PlotWidget()
+            hist, bins = np.histogram(plot_data[1], bins=10)
+            plot_widget2.plot(bins, hist, stepMode=True, fillLevel=0, brush=color)
+            plot_layout.addWidget(plot_widget2)
+            plot_widget2.setTitle("PY = {}".format(np.mean(plot_data[1])))
+            self.plot_widgets.append(plot_widget2)
+            self.layout().addLayout(plot_layout)
+
+            plot_widget3 = pg.PlotWidget()
+            hist, bins = np.histogram(plot_data[2], bins=10)
+            plot_widget3.plot(bins, hist, stepMode=True, fillLevel=0, brush=color)
+            plot_layout.addWidget(plot_widget3)
+            plot_widget3.setTitle("PZ = {}".format(np.mean(plot_data[2])))
+            self.plot_widgets.append(plot_widget3)
             self.layout().addLayout(plot_layout)
 
             
@@ -63,35 +83,43 @@ class Tab1(QWidget):
         self.data_reader = None
         self.plot_data = None
         self.previous_plot_data = None
-        
-        filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
-        self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"VERTEX")
+
+        #Momentum Plot
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
         self.plot_data = self.data_reader.read_data()
+        
+        self.momentumPlot = StaticHistogram(self.plot_data)
+        layout.addWidget(self.momentumPlot,0,0)
+        
+
+        #vertex
+        #filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
+        #self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"VERTEX")
+        #self.plot_data = self.data_reader.read_data()
 
         #self.histogram_plot = HistogramComparisonPlot(self.plot_data, np.zeros_like(self.plot_data))
         #layout.addWidget(self.histogram_plot)
         
-        self.momentumPlot = StaticHistogram(self.plot_data)
-        layout.addWidget(self.momentumPlot,0,0)
 
-        self.momentumPlot2 = StaticHistogram(self.plot_data)
-        layout.addWidget(self.momentumPlot2,3,0)
+
+ 
 
         # Add update button
         self.update_button = QPushButton("Update")
         self.update_button.clicked.connect(self.update_plots)
-        layout.addWidget(self.update_button,3,3)
+        layout.addWidget(self.update_button)
 
     def update_plots(self):
         if self.data_reader:
-            self.previous_plot_data = self.plot_data.copy() if self.plot_data is not None else None
+            #self.previous_plot_data = self.plot_data.copy() if self.plot_data is not None else None
             self.data_reader.next_file()
             self.plot_data = self.data_reader.read_data()
-            self.histogram_plot = HistogramPlot(self.plot_data, self.previous_plot_data)
-
+            #self.histogram_plot = HistogramPlot(self.plot_data, self.previous_plot_data)
             layout = self.layout()
-            layout.replaceWidget(layout.itemAt(0).widget(), self.histogram_plot)
+            layout.replaceWidget(layout.itemAt(0).widget(), self.momentumPlot)
             layout.addWidget(self.update_button)
+            print("next plot")
 
 class Tab2(QWidget):
     def __init__(self):
@@ -116,7 +144,7 @@ class App(QMainWindow):
         tab1 = Tab1()
         tab2 = Tab2()
 
-        tabs.addTab(tab1, "Vtx Information")
+        tabs.addTab(tab1, "Main Display")
         tabs.addTab(tab2, "Hit Information")
         self.setCentralWidget(tabs)
 
