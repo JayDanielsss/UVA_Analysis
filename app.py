@@ -52,8 +52,8 @@ class StaticHistogram(QWidget):
 class ScatterPlot(QWidget):
     def __init__(self, elemID, detID):
         super().__init__()
-        self.elemID = elemID
-        self.detID = detID
+        self.elemID = elemID[0]
+        self.detID = detID[0]
         self.create_scatter_plot()
 
     def create_scatter_plot(self):
@@ -61,11 +61,11 @@ class ScatterPlot(QWidget):
         self.plot_widget = pg.PlotWidget()
 
         # Generate some random data for the scatter plot
-        x = np.random.normal(size=100)
-        y = np.random.normal(size=100)
+       # x = np.random.normal(size=100)
+       # y = np.random.normal(size=100)
 
         # Plot the scatter plot
-        scatter = pg.ScatterPlotItem(x=x, y=y, pen=None, brush='r')
+        scatter = pg.ScatterPlotItem(x=self.detID, y=self.elemID, pen=None, brush='r')
         self.plot_widget.addItem(scatter)
 
         # Add the PlotWidget directly to the layout

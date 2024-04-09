@@ -33,7 +33,11 @@ class DataReader:
             targettree = uproot.open(filename)['QA_ana']
             elementid=targettree["elementID"].arrays(library="np")["elementID"]
             detectorid=targettree["detectorID"].arrays(library="np")["detectorID"]
-
+            mask = elementid < 300
+            elementid = np.where(mask, elementid, 0)
+            mask = detectorid < 300
+            detectorid = np.where(mask, detectorid, 0)
+            
             return elementid, detectorid
         
         elif self.grab == "MOMENTUM":
@@ -56,14 +60,14 @@ class DataReader:
 
 # import sys
 # import os
-# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
-# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
+# filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
+# data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"HIT")
 # plot_data = data_reader.read_data()
 
 # import matplotlib.pyplot as plt
 
-# plt.hist(plot_data[0],10)
+# #plt.hist(plot_data[0],10)
 
-# plt.show()
+# #plt.show()
 
-# print(np.mean(plot_data[0]))
+# print(np.shape(plot_data[0]))
