@@ -41,10 +41,11 @@ class DataReader:
             
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
-            print(filename)
-            px = np.concatenate((reco[15][reco[15] < 1e6],reco[18][reco[18] < 1e6]))
-            py = np.concatenate((reco[16][reco[16] < 1e6],reco[19][reco[19] < 1e6]))
-            pz = np.concatenate((reco[17][reco[17] < 1e6],reco[20][reco[20] < 1e6]))                   
+            print(len(reco[15])+len(reco[18]))
+            px = np.concatenate((reco[15][abs(reco[15]) < 120],reco[18][abs(reco[18]) < 120]))
+            py = np.concatenate((reco[16][abs(reco[16]) < 120],reco[19][abs(reco[19]) < 120]))
+            pz = np.concatenate((reco[17][abs(reco[17]) < 120],reco[20][abs(reco[20]) < 120])) 
+            print(len(px))                  
             return px, py, pz            
             
         else:
@@ -55,13 +56,19 @@ class DataReader:
 
 #For Testing
 
-import sys
-import os
-filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
-plot_data = data_reader.read_data()
+# import sys
+# import os
+# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+# plot_data = data_reader.read_data()
 
-print(filenames)
+# hits = plot_data[1]
+# detID=np.where(hits[0]==True)[0]
+# print(detID[:53])
+# event=1
+# event = (event + 1) % len(hits)
+# print(event)
+
 
 #import matplotlib.pyplot as plt
 
