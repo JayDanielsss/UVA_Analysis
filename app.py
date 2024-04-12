@@ -5,7 +5,8 @@ import pyqtgraph as pg
 import numpy as np
 from DataReader import DataReader
 
-
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 class StaticHistogram(QWidget):
     def __init__(self,data):
@@ -49,29 +50,53 @@ class StaticHistogram(QWidget):
             self.plot_widgets.append(plot_widget3)
             self.layout().addLayout(plot_layout)
 
-class ScatterPlot(QWidget):
-    def __init__(self, elemID, detID):
+
+class HitMatrixPlotter:
+    def __init__(self, event):
         super().__init__()
-        self.elemID = elemID[0]
-        self.detID = detID[0]
-        self.create_scatter_plot()
+        self.figure = Figure(figsize=(10, 6))
+        self.canvas = FigureCanvas(self.figure)
+        self.ax = self.figure.add_subplot(111)
+        self.ax.clear()
 
-    def create_scatter_plot(self):
-        # Create a PlotWidget
-        self.plot_widget = pg.PlotWidget()
+        # Get the number of detectors and elements
+        num_detectors = event.shape[0]
+        num_elements = event.shape[1]
 
-        # Generate some random data for the scatter plot
-       # x = np.random.normal(size=100)
-       # y = np.random.normal(size=100)
+        # Create a grid of detectors vs elements
+        detectors_grid, elements_grid = np.meshgrid(np.arange(num_detectors), np.arange(num_elements))
 
-        # Plot the scatter plot
-        scatter = pg.ScatterPlotItem(x=self.detID, y=self.elemID, pen=None, brush='r')
-        self.plot_widget.addItem(scatter)
+        # Plot the detectors vs elements for the selected event
+        self.ax.scatter(detectors_grid, elements_grid, c=event, cmap='binary', marker='_')
+        self.ax.set_ylabel('Elements')
+        self.ax.set_xlabel('Detectors')
+        self.ax.set_title('Hit Matrix')
+        self.ax.grid(True)
 
-        # Add the PlotWidget directly to the layout
-        layout = QHBoxLayout()
-        layout.addWidget(self.plot_widget)
-        self.setLayout(layout)
+        self.canvas.draw()
+# class ScatterPlot(QWidget):
+#     def __init__(self, elemID, detID):
+#         super().__init__()
+#         self.elemID = elemID[0]
+#         self.detID = detID[0]
+#         self.create_scatter_plot()
+
+#     def create_scatter_plot(self):
+#         # Create a PlotWidget
+#         self.plot_widget = pg.PlotWidget()
+
+#         # Generate some random data for the scatter plot
+#        # x = np.random.normal(size=100)
+#        # y = np.random.normal(size=100)
+
+#         # Plot the scatter plot
+#         scatter = pg.ScatterPlotItem(x=self.detID, y=self.elemID, pen=None, brush='r')
+#         self.plot_widget.addItem(scatter)
+
+#         # Add the PlotWidget directly to the layout
+#         layout = QHBoxLayout()
+#         layout.addWidget(self.plot_widget)
+#         self.setLayout(layout)
         
 class HistogramComparisonPlot(QWidget):
     def __init__(self, vtx_data, previous_data=None):
@@ -117,13 +142,16 @@ class Tab1(QWidget):
 
         
         #Hitmatrix Plot
-        filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
-        self.data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"HIT")
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
         self.plot_data = self.data_reader.read_data()
-
-
-        scatter_plot = ScatterPlot(self.plot_data[0],self.plot_data[1])
-        layout.addWidget(scatter_plot, 0,0) 
+        hits = self.plot_data[1]
+        hit_matrix_plotter = HitMatrixPlotter(hits[0])
+        layout.addWidget(hit_matrix_plotter.canvas,0,0)
+  
+  
+        #scatter_plot = ScatterPlot(self.plot_data[0],self.plot_data[1])
+        #layout.addWidget(scatter_plot, 0,0) 
 
         #vertex
         #filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])

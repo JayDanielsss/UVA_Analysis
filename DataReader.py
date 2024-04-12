@@ -30,15 +30,12 @@ class DataReader:
             return vtx_data
         elif self.grab == "HIT":
             filename = self.filenames[self.current_index]
-            targettree = uproot.open(filename)['QA_ana']
-            elementid=targettree["elementID"].arrays(library="np")["elementID"]
-            detectorid=targettree["detectorID"].arrays(library="np")["detectorID"]
-            mask = elementid < 300
-            elementid = np.where(mask, elementid, 0)
-            mask = detectorid < 300
-            detectorid = np.where(mask, detectorid, 0)
-            
-            return elementid, detectorid
+            reco = np.load(filename,allow_pickle=True)
+            eventID = reco['arr_0'][33]
+            hits = reco['arr_1']
+
+            return eventID, hits
+            #return elementid, detectorid
         
         elif self.grab == "MOMENTUM":
             
@@ -58,16 +55,18 @@ class DataReader:
 
 #For Testing
 
-# import sys
-# import os
-# filenames = sorted([filename for filename in os.listdir("Data") if filename.endswith(".root")])
-# data_reader = DataReader([os.path.join("Data", filename) for filename in filenames],"HIT")
-# plot_data = data_reader.read_data()
+import sys
+import os
+filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+plot_data = data_reader.read_data()
 
-# import matplotlib.pyplot as plt
+print(filenames)
 
-# #plt.hist(plot_data[0],10)
+#import matplotlib.pyplot as plt
 
-# #plt.show()
+#plt.hist(plot_data[0],10)
 
-# print(np.shape(plot_data[0]))
+#plt.show()
+
+#print(np.shape(plot_data[0]))
