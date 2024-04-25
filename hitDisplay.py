@@ -355,38 +355,49 @@ class HitDisplay:
         
 
     def getOcc(self,hits,event):
-        # count_st1 = 0
-        # count_st2 = 0
-        # count_st3M = 0
-        # count_st3P = 0
 
         Hodo = np.zeros(15)
 
-        DC = np.zeros(4)
+        DC = np.zeros(24)
 
         propTube = np.zeros(7)
 
 
 
         hitmatrix = np.vstack((np.where(hits[event]==True)[0],np.where(hits[event]==True)[1])).T
+
+        for i in range(0,7):
+            index = hitmatrix[hitmatrix[:,0] == i]
+            DC[i] = len(index)
+
+        for i in range(12,17):
+            index = hitmatrix[hitmatrix[:,0] == i]
+            DC[i-6] = len(index)
         
-        index1 = hitmatrix[(hitmatrix[:,0]>=0)*(hitmatrix[:,0]<=6)]
+        for i in range(18,23):
+            index = hitmatrix[hitmatrix[:,0] == i]
+            DC[i-6] = len(index)
+        for i in range(24,29):
+            index = hitmatrix[hitmatrix[:,0] == i]
+            DC[i-6] = len(index)
         
-        DC[0]= len(index1)
+        # index1 = hitmatrix[(hitmatrix[:,0]>=0)*(hitmatrix[:,0]<=6)]
+        
+        # DC[0]= len(index1)
 
 
         
-        index1 = hitmatrix[(hitmatrix[:,0]>=12)*(hitmatrix[:,0]<=17)]
+        # index1 = hitmatrix[(hitmatrix[:,0]>=12)*(hitmatrix[:,0]<=17)]
         
-        DC[1] = len(index1)
+        # DC[1] = len(index1)
         
-        index1 = hitmatrix[(hitmatrix[:,0]>=18)*(hitmatrix[:,0]<=23)]
+        # index1 = hitmatrix[(hitmatrix[:,0]>=18)*(hitmatrix[:,0]<=23)]
         
-        DC[2] = len(index1)
+        # DC[2] = len(index1)
 
-        index1 = hitmatrix[(hitmatrix[:,0]>=24)*(hitmatrix[:,0]<=29)]
+        # index1 = hitmatrix[(hitmatrix[:,0]>=24)*(hitmatrix[:,0]<=29)]
         
-        DC[3] = len(index1)
+        # DC[3] = len(index1)
 
         #hodo occupancy
 
