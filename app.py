@@ -1,5 +1,8 @@
+
+# (1): Import native Pythion libraries:
 import sys
 import os
+
 from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
 import pyqtgraph as pg
 import numpy as np
@@ -13,6 +16,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import matplotlib.pyplot as plt
+
 from SpillCharts import SpillCharts
 from StripCharts import StripCharts
 from VertexHists import VertHists
