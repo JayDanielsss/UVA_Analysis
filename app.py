@@ -26,6 +26,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+# (3): Modules:
+from modules.reading_files import read_tsv_file_with_python
+
 # class OccPlotter(QWidget):
 #     def __init__(self,DC,Hodo,Prop):
 #         super().__init__()
@@ -61,7 +64,14 @@ from matplotlib.figure import Figure
         
 
 class HitMatrixPlotter(QWidget):
-    def __init__(self, hitmatrix,Station,Plane, x_range=None, y_range=None,Title=None):
+    def __init__(
+            self, 
+            hitmatrix,
+            Station,
+            Plane,
+            x_range = None,
+            y_range = None,
+            Title = None):
         super().__init__()
 
         # Create a layout to hold the plot widget
@@ -418,8 +428,14 @@ class App(QMainWindow):
 
 
 if __name__ == "__main__":
+
+    # (1): Initalize the main QT Application
     app = QApplication(sys.argv)
+
+    # (2): Initialize the Window:
     window = App()
+
+    # (3): Show the Window:
     window.show()
 
     window2 = StripChartWindow()
