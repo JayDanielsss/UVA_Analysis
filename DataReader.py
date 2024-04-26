@@ -10,7 +10,8 @@ class DataReader:
 
     def read_data(self):
         
-
+        print(self.grab)
+        
         if self.grab == "VERTEX":
             filename = self.filenames[self.current_index]
             targettree = uproot.open(filename)['QA_ana']
