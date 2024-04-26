@@ -1,8 +1,5 @@
-
-# (1): Import native Pythion libraries:
 import sys
 import os
-
 from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
 import pyqtgraph as pg
 import numpy as np
@@ -16,7 +13,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import matplotlib.pyplot as plt
-
 from SpillCharts import SpillCharts
 from StripCharts import StripCharts
 from VertexHists import VertHists
@@ -25,9 +21,6 @@ from VertexHists import VertHists
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-
-# (3): Modules:
-from modules.reading_files import read_tsv_file_with_python
 
 # class OccPlotter(QWidget):
 #     def __init__(self,DC,Hodo,Prop):
@@ -64,14 +57,7 @@ from modules.reading_files import read_tsv_file_with_python
         
 
 class HitMatrixPlotter(QWidget):
-    def __init__(
-            self, 
-            hitmatrix,
-            Station,
-            Plane,
-            x_range = None,
-            y_range = None,
-            Title = None):
+    def __init__(self, hitmatrix,Station,Plane, x_range=None, y_range=None,Title=None):
         super().__init__()
 
         # Create a layout to hold the plot widget
@@ -147,11 +133,36 @@ class MyTable(QTableWidget):
         self.setData()
 
     def setData(self):
-        # Example data
+
+        #Direct Data
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        self.plot_data = self.data_reader.read_data()
+
+        # #Momentum
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
+        self.plot_data = self.data_reader.read_data()
+        meanPX = np.mean(self.plot_data[0])
+        meanPY = np.mean(self.plot_data[1])
+        meanPZ = np.mean(self.plot_data[2])
+
+        del(self.plot_data)
+
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        self.plot_data = self.data_reader.read_data()
+        RunID = self.plot_data[0][0]
+        SpillID = self.plot_data[1][0]
+
         data = [
-            ("Run ID", 0),
-            ("Spill ID",  0),
+            ("Run ID", RunID),
+            ("Spill ID",  SpillID),
             ("Total Hits",  0),
+            ("PX",meanPX),
+            ("PY",meanPY),
+            ("PZ",meanPZ)
+
             
         ]
 
@@ -247,13 +258,11 @@ class Tab1(QWidget):
         self.plot_data = None
         self.previous_plot_data = None
 
-        # #Momentum Plot
-        # filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
-        # self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
-        # self.plot_data = self.data_reader.read_data()
+
+        
         
         # self.momentumPlot = StaticHistogram(self.plot_data)
-        # layout.addWidget(self.momentumPlot,1,0)
+        # layout.addWidget(self.momentumPlot)
 
         
         #Hitmatrix Plot
@@ -280,15 +289,10 @@ class Tab1(QWidget):
             Hodoscope[i] = Hodo
             propTube[i] = Prop
 
+        del(self.hits)
+
 
         
-        
-
-        
-
-        
-    
-
 
         #Hitmatrix Display
         hit_layout = QHBoxLayout()
@@ -344,7 +348,7 @@ class Tab1(QWidget):
         self.hit_matrix_plotter8 = HitMatrixPlotter(hitmatrix,Station=propTube,Plane=[8,8,8,8,8,8,8,8,8],x_range=x_range, y_range=y_range,Title="Prop Tubes")
         hit_layout.addWidget(self.hit_matrix_plotter8,stretch=3) 
         
-        Readout = MyTable(3,2)
+        Readout = MyTable(6,2)
         hit_layout.addWidget(Readout, stretch=3)
 
         layout.addLayout(hit_layout,stretch=2)
@@ -386,10 +390,7 @@ class Tab2(QWidget):
 
 
 class StripChartWindow(QMainWindow):
-    """
-    This "window" is a QWidget. If it has no parent, it
-    will appear as a free-floating window as we want.
-    """
+ 
     def __init__(self):
         super().__init__()
         self.title = 'SpinQuest Display'
@@ -428,14 +429,8 @@ class App(QMainWindow):
 
 
 if __name__ == "__main__":
-
-    # (1): Initalize the main QT Application
     app = QApplication(sys.argv)
-
-    # (2): Initialize the Window:
     window = App()
-
-    # (3): Show the Window:
     window.show()
 
     window2 = StripChartWindow()

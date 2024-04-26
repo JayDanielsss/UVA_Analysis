@@ -351,7 +351,9 @@ class HitDisplay:
         else:
             print("Error")
 
-        
+    def headOnDisplay(self,hitmatrix):
+        return(print("AHDSUGD"))
+
         
 
     def getOcc(self,hits,event):
@@ -427,10 +429,13 @@ class HitDisplay:
 
 
 
-# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
-# plot_data = data_reader.read_data()
-# hits = plot_data[1]
+filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+plot_data = data_reader.read_data()
+hits = plot_data[1]
+eventID = plot_data[0]
+
+print(hits)
 
 
 # hitmatrix = np.vstack((np.where(hits==True)[0],np.where(hits==True)[1])).T
