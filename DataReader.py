@@ -46,7 +46,41 @@ class DataReader:
             py = np.concatenate((reco[16][abs(reco[16]) < 120],reco[19][abs(reco[19]) < 120]))
             pz = np.concatenate((reco[17][abs(reco[17]) < 120],reco[20][abs(reco[20]) < 120])) 
             print(len(px))                  
-            return px, py, pz            
+            return px, py, pz      
+
+        elif self.grab == "XVERTEX":
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            vtx = reco[:,21][reco[:,21]<1e6]
+            return vtx
+        elif self.grab == "YVERTEX":
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            vty = reco[:,22][reco[:,22]<1e6]
+            return vty
+        elif self.grab == "ZVERTEX":
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            vtz = reco[:,23][reco[:,23]<1e6]
+            return vtz
+        elif self.grab == "EVENT":
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            eid = reco[:,33]
+            return eid
+        elif self.grab == "SPILL":
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            sid = reco[:,34]
+            return sid      
+        
+        elif self.grab == "MetaDATA":
+            filename = self.filenames[self.current_index]
+            reco = np.load(filename)
+            runID = reco[:,32]
+            sid = reco[:,34]
+            #targetPOS = reco[:,36]
+            return runID, sid#, targetPOS
             
         else:
             print("DATA NOT SENT!")
@@ -56,11 +90,14 @@ class DataReader:
 
 #For Testing
 
-# import sys
-# import os
-# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
-# plot_data = data_reader.read_data()
+import sys
+import os
+filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+plot_data = data_reader.read_data()
+
+
+print(plot_data)
 
 # hits = plot_data[1]
 # detID=np.where(hits[0]==True)[0]
