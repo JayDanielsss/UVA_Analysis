@@ -41,6 +41,7 @@ class DataReader:
             
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+            reco = reco['arr_0']
             print(len(reco[15])+len(reco[18]))
             px = np.concatenate((reco[15][abs(reco[15]) < 120],reco[18][abs(reco[18]) < 120]))
             py = np.concatenate((reco[16][abs(reco[16]) < 120],reco[19][abs(reco[19]) < 120]))
@@ -51,32 +52,50 @@ class DataReader:
         elif self.grab == "XVERTEX":
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+
+            reco = reco['arr_0']
+
             vtx = reco[:,21][reco[:,21]<1e6]
             return vtx
         elif self.grab == "YVERTEX":
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+
+            reco = reco['arr_0']
+
             vty = reco[:,22][reco[:,22]<1e6]
             return vty
         elif self.grab == "ZVERTEX":
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+
+            reco = reco['arr_0']
+
             vtz = reco[:,23][reco[:,23]<1e6]
             return vtz
         elif self.grab == "EVENT":
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+
+            reco = reco['arr_0']
+
             eid = reco[:,33]
             return eid
         elif self.grab == "SPILL":
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+
+            reco = reco['arr_0']
+
             sid = reco[:,34]
             return sid      
         
         elif self.grab == "MetaDATA":
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
+
+            reco = reco['arr_0']
+
             runID = reco[:,32]
             sid = reco[:,34]
             #targetPOS = reco[:,36]
@@ -90,6 +109,13 @@ class DataReader:
 
 #For Testing
 
+
+# import sys
+# import os
+# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+# plot_data = data_reader.read_data()
+
 import sys
 import os
 filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
@@ -98,6 +124,10 @@ plot_data = data_reader.read_data()
 
 
 print(plot_data)
+
+
+
+# print(plot_data)
 
 # hits = plot_data[1]
 # detID=np.where(hits[0]==True)[0]
