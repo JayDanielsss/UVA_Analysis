@@ -1,8 +1,5 @@
-
-# (1): Import native Pythion libraries:
 import sys
 import os
-
 from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
 import pyqtgraph as pg
 import numpy as np
@@ -10,13 +7,12 @@ from DataReader import DataReader
 from hitDisplay import HitDisplay
 
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt 
+from PyQt5.QtCore import Qt, QTimer
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import matplotlib.pyplot as plt
-
 from SpillCharts import SpillCharts
 from StripCharts import StripCharts
 from VertexHists import VertHists
@@ -25,9 +21,6 @@ from VertexHists import VertHists
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-
-# (3): Modules:
-from modules.reading_files import read_tsv_file_with_python
 
 # class OccPlotter(QWidget):
 #     def __init__(self,DC,Hodo,Prop):
@@ -64,14 +57,7 @@ from modules.reading_files import read_tsv_file_with_python
         
 
 class HitMatrixPlotter(QWidget):
-    def __init__(
-            self, 
-            hitmatrix,
-            Station,
-            Plane,
-            x_range = None,
-            y_range = None,
-            Title = None):
+    def __init__(self, hitmatrix,Station,Plane, x_range=None, y_range=None,Title=None):
         super().__init__()
 
         # Create a layout to hold the plot widget
@@ -118,9 +104,9 @@ class HitMatrixPlotter(QWidget):
         self.plot_widget.addItem(scatter_plot)
 
     def getStationOcc(self,detector,Plane):
-
+        
         geometery = np.loadtxt("geometery.csv", delimiter=",", dtype=str)
-
+        
         PerEvent = np.zeros_like(detector)
         
 
@@ -147,11 +133,36 @@ class MyTable(QTableWidget):
         self.setData()
 
     def setData(self):
-        # Example data
+
+        #Direct Data
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        self.plot_data = self.data_reader.read_data()
+
+        # #Momentum
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
+        self.plot_data = self.data_reader.read_data()
+        meanPX = np.mean(self.plot_data[0])
+        meanPY = np.mean(self.plot_data[1])
+        meanPZ = np.mean(self.plot_data[2])
+
+        del(self.plot_data)
+
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        self.plot_data = self.data_reader.read_data()
+        RunID = self.plot_data[0][0]
+        SpillID = self.plot_data[1][0]
+
         data = [
-            ("Run ID", 0),
-            ("Spill ID",  0),
+            ("Run ID", RunID),
+            ("Spill ID",  SpillID),
             ("Total Hits",  0),
+            ("PX",meanPX),
+            ("PY",meanPY),
+            ("PZ",meanPZ)
+
             
         ]
 
@@ -247,18 +258,39 @@ class Tab1(QWidget):
         self.plot_data = None
         self.previous_plot_data = None
 
-        # #Momentum Plot
-        # filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
-        # self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
-        # self.plot_data = self.data_reader.read_data()
+        self.currentFile = 0
+
+
+        
         
         # self.momentumPlot = StaticHistogram(self.plot_data)
-        # layout.addWidget(self.momentumPlot,1,0)
+        # layout.addWidget(self.momentumPlot)
 
         
         #Hitmatrix Plot
+        self.draw_hitmatrix()
+
+        # Add update button
+        self.update_button = QPushButton("Update")
+        self.update_button.clicked.connect(self.update_plots)
+        layout.addWidget(self.update_button)
+
+        #timer = QTimer(self)
+        #timer.timeout.connect(self.update_plots)
+        #timer.start(500)   
+
+    def update_plots(self):
+        layout = self.layout()
+        self.deleteItemsOfLayout(self.hit_layout)
+        #layout.removeItem(self.hit_layout)
+        self.draw_hitmatrix()
+       
+
+    def draw_hitmatrix(self):
         filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
         self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+        self.data_reader.current_index = self.currentFile
+        self.currentFile += 1
         self.plot_data = self.data_reader.read_data()
         self.hits = self.plot_data[1]
     
@@ -280,24 +312,15 @@ class Tab1(QWidget):
             Hodoscope[i] = Hodo
             propTube[i] = Prop
 
-
-        
-        
-
-        
-
-        
-    
-
-
+        del(self.hits)
         #Hitmatrix Display
-        hit_layout = QHBoxLayout()
+        self.hit_layout = QHBoxLayout()
 
         x_range = (29, 33)
         y_range = (0, 23)
         #Hodo1
         self.hit_matrix_plotter = HitMatrixPlotter(hitmatrix,Station=Hodoscope[:,:4],Plane=np.arange(6,10),x_range=x_range, y_range=y_range,Title="Hodo: 1")
-        hit_layout.addWidget(self.hit_matrix_plotter,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter,stretch=3)
 
         
 
@@ -305,69 +328,59 @@ class Tab1(QWidget):
         y_range = (0, 201)
         #DC1
         self.hit_matrix_plotter2 = HitMatrixPlotter(hitmatrix,Station=DriftChamber[:,:6],Plane=np.arange(0,6),x_range=x_range, y_range=y_range,Title="DC St: 1")
-        hit_layout.addWidget(self.hit_matrix_plotter2,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter2,stretch=3)
 
         x_range = (12, 17)
         y_range = (0, 128)
         #DC2
         self.hit_matrix_plotter3 = HitMatrixPlotter(hitmatrix,Station=DriftChamber[:,6:12],Plane=np.arange(20,26),x_range=x_range, y_range=y_range,Title="DC St: 2")
-        hit_layout.addWidget(self.hit_matrix_plotter3,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter3,stretch=3)
 
         x_range = (33, 37)
         y_range = (0, 19)
         #Hodo2
         self.hit_matrix_plotter4 = HitMatrixPlotter(hitmatrix,Station=Hodoscope[:,4:8],Plane=np.arange(26,30),x_range=x_range, y_range=y_range,Title="Hodo: 2")
-        hit_layout.addWidget(self.hit_matrix_plotter4,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter4,stretch=3)
 
         x_range = (17, 23)
         y_range = (0, 134)
         #DC3M
         self.hit_matrix_plotter5 = HitMatrixPlotter(hitmatrix,Station=DriftChamber[:,12:18],Plane=np.arange(34,40),x_range=x_range, y_range=y_range,Title="DC St:3m")
-        hit_layout.addWidget(self.hit_matrix_plotter5,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter5,stretch=3)
 
         x_range = (23, 29)
         y_range = (0, 134)
         #DC3P
         self.hit_matrix_plotter6 = HitMatrixPlotter(hitmatrix,Station=DriftChamber[:,18:24],Plane=np.arange(40,46),x_range=x_range, y_range=y_range,Title="DC St:3p")
-        hit_layout.addWidget(self.hit_matrix_plotter6,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter6,stretch=3)
 
         x_range = (37, 45)
         y_range = (0, 16)
         #Hodo 3 & 4
         self.hit_matrix_plotter7 = HitMatrixPlotter(hitmatrix,Station=Hodoscope[:,8:20],Plane=[46,47,66,67,86,87,88,89],x_range=x_range, y_range=y_range,Title="Hodo: 3 & 4")
-        hit_layout.addWidget(self.hit_matrix_plotter7,stretch=3)
+        self.hit_layout.addWidget(self.hit_matrix_plotter7,stretch=3)
 
         x_range = (45, 54)
         y_range = (0, 72)
 
         #Prop
         self.hit_matrix_plotter8 = HitMatrixPlotter(hitmatrix,Station=propTube,Plane=[8,8,8,8,8,8,8,8,8],x_range=x_range, y_range=y_range,Title="Prop Tubes")
-        hit_layout.addWidget(self.hit_matrix_plotter8,stretch=3) 
+        self.hit_layout.addWidget(self.hit_matrix_plotter8,stretch=3) 
         
-        Readout = MyTable(3,2)
-        hit_layout.addWidget(Readout, stretch=3)
+        Readout = MyTable(6,2)
+        self.hit_layout.addWidget(Readout, stretch=3)
 
-        layout.addLayout(hit_layout,stretch=2)
+        layout = self.layout()
+        layout.addLayout(self.hit_layout)
 
-        # Add update button
-        self.update_button = QPushButton("Update")
-        self.update_button.clicked.connect(self.update_plots)
-        layout.addWidget(self.update_button)
+    def deleteItemsOfLayout(self,layout):
+        if layout is not None:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.setParent(None)
 
-        
-       
-
-
-    def update_plots(self):
-        if self.data_reader:
-            #self.previous_plot_data = self.plot_data.copy() if self.plot_data is not None else None
-            self.data_reader.next_file()
-            self.plot_data = self.data_reader.read_data()
-            #self.histogram_plot = HistogramPlot(self.plot_data, self.previous_plot_data)
-            layout = self.layout()
-            layout.replaceWidget(layout.itemAt(0).widget(), self.momentumPlot)
-            layout.addWidget(self.update_button)
-            print("next plot")
 
 
 class Tab2(QWidget):
@@ -386,10 +399,7 @@ class Tab2(QWidget):
 
 
 class StripChartWindow(QMainWindow):
-    """
-    This "window" is a QWidget. If it has no parent, it
-    will appear as a free-floating window as we want.
-    """
+ 
     def __init__(self):
         super().__init__()
         self.title = 'SpinQuest Display'
@@ -428,14 +438,8 @@ class App(QMainWindow):
 
 
 if __name__ == "__main__":
-
-    # (1): Initalize the main QT Application
     app = QApplication(sys.argv)
-
-    # (2): Initialize the Window:
     window = App()
-
-    # (3): Show the Window:
     window.show()
 
     window2 = StripChartWindow()
