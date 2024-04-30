@@ -135,12 +135,20 @@ class MyTable(QTableWidget):
     def setData(self):
 
         #Direct Data
+
         filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+
         self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
         self.plot_data = self.data_reader.read_data()
 
         # #Momentum
+
         filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+
         self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
         self.plot_data = self.data_reader.read_data()
         meanPX = np.mean(self.plot_data[0])
@@ -149,7 +157,11 @@ class MyTable(QTableWidget):
 
         del(self.plot_data)
 
+
         filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+
+        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+
         self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
         self.plot_data = self.data_reader.read_data()
         RunID = self.plot_data[0][0]
@@ -258,7 +270,9 @@ class Tab1(QWidget):
         self.plot_data = None
         self.previous_plot_data = None
 
+
         self.currentFile = 0
+
 
 
         
@@ -313,6 +327,7 @@ class Tab1(QWidget):
             propTube[i] = Prop
 
         del(self.hits)
+
         #Hitmatrix Display
         self.hit_layout = QHBoxLayout()
 
@@ -368,7 +383,11 @@ class Tab1(QWidget):
         self.hit_layout.addWidget(self.hit_matrix_plotter8,stretch=3) 
         
         Readout = MyTable(6,2)
+
         self.hit_layout.addWidget(Readout, stretch=3)
+
+        hit_layout.addWidget(Readout, stretch=3)
+
 
         layout = self.layout()
         layout.addLayout(self.hit_layout)
