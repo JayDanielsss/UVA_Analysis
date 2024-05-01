@@ -2,34 +2,39 @@
 ## SpinQuest GUI ##
 ###################
 
-# Import native Python libraries:
+# sys | Native Python Libraries:
 import sys
+
+# os | Native Python Libraries:
 import os
+
+# PyQT5 | External Python Libraries
+from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt, QTimer
+
+# pyqtgraph | External Python Libraries
+import pyqtgraph as pg
+
+# NumPy | External Python Libraries
+import numpy as np
+
+# matplotlib | External Python Libraries
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+# Custom-built windows:
+from SpillCharts import SpillCharts
+from StripCharts import StripCharts
+from DataReader import DataReader
+from hitDisplay import HitDisplay
+from VertexHists import VertHists
 
 if not (os.path.exists("Reconstructed")):
             path = os.path.join("Reconstructed")
             os.mkdir(path)
             print("Reconstructed directory created, make sure the files from QTracker are sent here\n")
-
-
-from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
-import pyqtgraph as pg
-
-from DataReader import DataReader
-from hitDisplay import HitDisplay
-
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt, QTimer
-
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
-import numpy as np
-import matplotlib.pyplot as plt
-from SpillCharts import SpillCharts
-from StripCharts import StripCharts
-from VertexHists import VertHists
-
 
 # class OccPlotter(QWidget):
 #     def __init__(self,DC,Hodo,Prop):
