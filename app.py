@@ -1,5 +1,8 @@
-# THIS IS A TEST COMMENT TO SEE IF FORKING WORKS
+###################
+## SpinQuest GUI ##
+###################
 
+# Import native Python libraries:
 import sys
 import os
 
@@ -11,7 +14,7 @@ if not (os.path.exists("Reconstructed")):
 
 from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
 import pyqtgraph as pg
-import numpy as np
+
 from DataReader import DataReader
 from hitDisplay import HitDisplay
 
@@ -21,15 +24,11 @@ from PyQt5.QtCore import Qt, QTimer
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+import numpy as np
 import matplotlib.pyplot as plt
 from SpillCharts import SpillCharts
 from StripCharts import StripCharts
 from VertexHists import VertHists
-
-
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 
 # class OccPlotter(QWidget):
