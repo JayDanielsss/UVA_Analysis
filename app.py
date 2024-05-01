@@ -67,9 +67,6 @@ if not (os.path.exists("Reconstructed")):
 #         self.plot_widget.addItem(hist)
 
 
-        
-        
-
 class HitMatrixPlotter(QWidget):
     def __init__(self, hitmatrix,Station,Plane, x_range=None, y_range=None,Title=None):
         super().__init__()
@@ -446,16 +443,27 @@ class StripChartWindow(QMainWindow):
         self.setCentralWidget(tabs)
 
 class App(QMainWindow):
+
     def __init__(self):
         super().__init__()
-        self.title = 'SpinQuest Display'
-        self.left = 0
-        self.top = 0
-        self.width = 800
-        self.height = 400
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
-        
+
+        self.__application_title = 'SpinQuest Display'
+        self.left_margin = 0
+        self.top_margin = 0
+
+        self.window_width = 800
+        self.window_height = 400
+
+        # Set the application title:
+        self.setWindowTitle(self.__application_title)
+
+        # Set the application window size:
+        self.setGeometry(
+            self.left_margin, 
+            self.top_margin, 
+            self.window_width, 
+            self.window_height)
+
         tabs = QTabWidget()
         tab1 = Tab1()
         tab2 = Tab2()
@@ -465,7 +473,6 @@ class App(QMainWindow):
         
        # tabs.addTab(tab3, "Spill")
         self.setCentralWidget(tabs)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
