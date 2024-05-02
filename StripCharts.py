@@ -11,6 +11,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit
 from DataReader import DataReader
 import pyqtgraph as pg
 
+# Directory Names:
+from statics.directory_names.directory_names import _DIRECTORY_RECONSTRUCTED
+
 class StripCharts(QWidget):
     def __init__(self):
         super().__init__()
@@ -21,7 +24,7 @@ class StripCharts(QWidget):
         self.txtin = QLineEdit(self)
         self.setButton = QPushButton("Set number of spills displayed")
         self.setButton.clicked.connect(self.SetWindow)
-        self.vtxPlot.showGrid(x=True,y=True)
+        self.vtxPlot.showGrid(x = True, y = True)
         self.vtxPlot.setLabel('bottom',"Event ID")
         self.vtxPlot.setLabel('left',"X Vertex (cm)")
         self.vtyPlot.showGrid(x=True,y=True)
@@ -56,9 +59,9 @@ class StripCharts(QWidget):
         self.position = 0
         self.spillsDisplayed = 0
 
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
-        self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+        self.reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in self.filenames], "EVENT")
         while (self.currentFile < self.fileCount):
             if (self.currentFile >= self.MAX_SPILLS):
                 self.vtxPlot.removeItem(self.xScatter[self.position])
@@ -71,14 +74,14 @@ class StripCharts(QWidget):
         timer.start(500)    
 
     def UpdateChart(self):
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         if (self.fileCount > self.currentFile):
             if (self.currentFile >= self.MAX_SPILLS):
                 self.vtxPlot.removeItem(self.xScatter[self.position])
                 self.vtyPlot.removeItem(self.yScatter[self.position])
                 self.vtzPlot.removeItem(self.zScatter[self.position])
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in self.filenames], "EVENT")
             self.DrawSpill()
 
 
@@ -95,9 +98,9 @@ class StripCharts(QWidget):
             self.currentFile = max(self.currentFile-self.MAX_SPILLS,0)
             self.position = 0
             self.spillsDisplayed = 0
-            self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+            self.filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
             self.fileCount = len(self.filenames)
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in self.filenames], "EVENT")
             while (self.currentFile < self.fileCount):
                 self.DrawSpill()
     

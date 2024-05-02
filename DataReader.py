@@ -1,6 +1,10 @@
 import numpy as np
 import uproot
 
+# Directory Names:
+from statics.directory_names.directory_names import _DIRECTORY_RECONSTRUCTED
+
+
 class DataReader:
     def __init__(self, filenames,grab):
         self.filenames = filenames
@@ -97,8 +101,8 @@ class DataReader:
 
 # import sys
 # import os
-# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
-# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+# filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npy")])
+# data_reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in filenames],"MetaDATA")
 # plot_data = data_reader.read_data()
 
 

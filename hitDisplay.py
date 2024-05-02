@@ -11,6 +11,9 @@ from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtCore import Qt
 import sys
 
+# Directory Names:
+from statics.directory_names.directory_names import _DIRECTORY_RECONSTRUCTED
+
 class HitDisplay:
     def __init__(self, hits):
         #elemid =np.where(hits==True)[1]
@@ -429,10 +432,10 @@ class HitDisplay:
 
 
 
-filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
 fileCount = len(filenames)
 if (fileCount > 0):
-    data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+    data_reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in filenames],"HIT")
     plot_data = data_reader.read_data()
     hits = plot_data[1]
     eventID = plot_data[0]

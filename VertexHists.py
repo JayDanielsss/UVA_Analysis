@@ -8,6 +8,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton
 from DataReader import DataReader
 import pyqtgraph as pg
 
+# Directory Names:
+from statics.directory_names.directory_names import _DIRECTORY_RECONSTRUCTED
+
 class VertHists(QWidget):
     def __init__(self):
         super().__init__()
@@ -51,10 +54,10 @@ class VertHists(QWidget):
             zOccurences = np.zeros(paraBinEdges.size-1)
             currentFile = 0
         while self.runButton.isChecked():
-            self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+            self.filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npy")])
             self.fileCount = len(self.filenames)
             if (self.fileCount > currentFile):
-                self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+                self.reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in self.filenames], "EVENT")
                 self.reader.current_index = currentFile
                 self.reader.grab = "EVENT"
                 self.eidData = self.reader.read_data()
