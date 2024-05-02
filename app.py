@@ -1,36 +1,46 @@
-# THIS IS A TEST COMMENT TO SEE IF FORKING WORKS
+###################
+## SpinQuest GUI ##
+###################
 
+# sys | Native Python Libraries:
 import sys
+
+# os | Native Python Libraries:
 import os
 
-if not (os.path.exists("Reconstructed")):
-            path = os.path.join("Reconstructed")
-            os.mkdir(path)
-            print("Reconstructed directory created, make sure the files from QTracker are sent here\n")
-
-
+# PyQT5 | External Python Libraries
 from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QGridLayout
-import pyqtgraph as pg
-import numpy as np
-from DataReader import DataReader
-from hitDisplay import HitDisplay
-
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QTimer
 
+# pyqtgraph | External Python Libraries
+import pyqtgraph as pg
+
+# NumPy | External Python Libraries
+import numpy as np
+
+# matplotlib | External Python Libraries
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-import matplotlib.pyplot as plt
+# Custom-built windows:
 from SpillCharts import SpillCharts
 from StripCharts import StripCharts
+from DataReader import DataReader
+from hitDisplay import HitDisplay
 from VertexHists import VertHists
 
+# Directory Names:
+from statics.directory_names.directory_names import _DIRECTORY_RECONSTRUCTED
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
+# Window Names:
+from statics.window_names.window_names import _WINDOW_MAIN_APP, _TAB_MAIN_NAME, _TAB_STRIPCHARTS
 
+if not (os.path.exists(_DIRECTORY_RECONSTRUCTED)):
+    path = os.path.join(_DIRECTORY_RECONSTRUCTED)
+    os.mkdir(path)
+    print(f"> [SpinQuest]: {_DIRECTORY_RECONSTRUCTED} directory created, make sure the files from QTracker are sent here\n")
 
 # class OccPlotter(QWidget):
 #     def __init__(self,DC,Hodo,Prop):
@@ -62,9 +72,6 @@ from matplotlib.figure import Figure
 #         self.plot_widget.setTitle(Title)
 #         self.plot_widget.addItem(hist)
 
-
-        
-        
 
 class HitMatrixPlotter(QWidget):
     def __init__(self, hitmatrix,Station,Plane, x_range=None, y_range=None,Title=None):
@@ -144,14 +151,14 @@ class MyTable(QTableWidget):
     def setData(self,fileNumber):
 
         #Direct Data
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in filenames],"MetaDATA")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
 
         # #Momentum
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
+        filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in filenames],"MOMENTUM")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
         meanPX = np.mean(self.plot_data[0])
@@ -161,8 +168,8 @@ class MyTable(QTableWidget):
 
         del(self.plot_data)
 
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in filenames],"MetaDATA")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
         RunID = self.plot_data[0][0]
@@ -307,12 +314,12 @@ class Tab1(QWidget):
        
 
     def draw_hitmatrix(self):
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        filenames = sorted([filename for filename in os.listdir(_DIRECTORY_RECONSTRUCTED) if filename.endswith(".npz")])
         self.fileCount = len(filenames)
         if (self.currentFile < self.fileCount):
             if (self.hit_layout_exists):
                 self.deleteItemsOfLayout(self.hit_layout)
-            self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+            self.data_reader = DataReader([os.path.join(_DIRECTORY_RECONSTRUCTED, filename) for filename in filenames],"HIT")
             self.data_reader.current_index = self.currentFile
             self.plot_data = self.data_reader.read_data()
             self.hits = self.plot_data[1]
@@ -438,36 +445,59 @@ class StripChartWindow(QMainWindow):
         
         tabs = QTabWidget()
         tab2 = Tab2()
-        tabs.addTab(tab2, "StripCharts")
+        tabs.addTab(tab2, _TAB_STRIPCHARTS)
         self.setCentralWidget(tabs)
 
 class App(QMainWindow):
+
     def __init__(self):
         super().__init__()
-        self.title = 'SpinQuest Display'
-        self.left = 0
-        self.top = 0
-        self.width = 800
-        self.height = 400
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
-        
+
+        # Window Main Title:
+        self.__application_title = _WINDOW_MAIN_APP
+
+        # Window Margins:
+        self.left_margin = 0
+        self.top_margin = 0
+
+        # Window Dimensions:
+        self.window_width = 800
+        self.window_height = 400
+
+        # Set the application title:
+        self.setWindowTitle(self.__application_title)
+
+        # Set the application window size:
+        self.setGeometry(
+            self.left_margin, 
+            self.top_margin, 
+            self.window_width, 
+            self.window_height)
+
+        # Initialize the first tab:
         tabs = QTabWidget()
+
+        # Initialize the first tab:
         tab1 = Tab1()
+
+        # Initialize the second tab:
         tab2 = Tab2()
+
+        # Initialize the third tab:
         #tab3 = SpillCharts()
 
-        tabs.addTab(tab1, "Main Display")
+        # Add a tab to the main window:
+        tabs.addTab(tab1, _TAB_MAIN_NAME)
+        tabs.addTab(StripChartWindow(), _TAB_STRIPCHARTS)
         
        # tabs.addTab(tab3, "Spill")
         self.setCentralWidget(tabs)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = App()
     window.show()
 
-    window2 = StripChartWindow()
-    window2.show()
+    # window2 = StripChartWindow()
+    # window2.show()
     sys.exit(app.exec_())

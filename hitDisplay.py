@@ -437,7 +437,7 @@ if (fileCount > 0):
     hits = plot_data[1]
     eventID = plot_data[0]
 
-    print(hits)
+    # print(hits)
 
 
 # hitmatrix = np.vstack((np.where(hits==True)[0],np.where(hits==True)[1])).T
