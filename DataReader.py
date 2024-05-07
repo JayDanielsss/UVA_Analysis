@@ -42,10 +42,13 @@ class DataReader:
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
             reco = reco['arr_0']
-            px = np.concatenate((reco[:,15][abs(reco[:,15]) < 120],reco[:,18][abs(reco[:,18]) < 120]))
-            py = np.concatenate((reco[:,16][abs(reco[:,16]) < 120],reco[:,19][abs(reco[:,19]) < 120]))
-            pz = np.concatenate((reco[:,17][abs(reco[:,17]) < 120],reco[:,20][abs(reco[:,20]) < 120]))                
-            return px, py, pz, len(py)      
+            ppx = reco[:,24]
+            npx = reco[:,27]
+            ppy = reco[:,25]
+            npy = reco[:,28]
+            ppz = reco[:,26]
+            npz = reco[:,29]                
+            return ppx, ppy, ppz, npx, npy, npz      
 
         elif self.grab == "XVERTEX":
             filename = self.filenames[self.current_index]
