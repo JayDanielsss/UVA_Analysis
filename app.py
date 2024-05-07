@@ -13,18 +13,11 @@ from hitDisplay import HitDisplay
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QTimer
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
-import matplotlib.pyplot as plt
-from SpillCharts import SpillCharts
 from StripCharts import StripCharts
-from VertexHists import VertHists
+from MassHist import MassHist
 
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 
 # class OccPlotter(QWidget):
@@ -484,9 +477,10 @@ class App(QMainWindow):
         
         tabs = QTabWidget()
         tab1 = Tab1()
-        #tab3 = SpillCharts()
+        tab2 = MassHist()
 
         tabs.addTab(tab1, "Main Display")
+        tabs.addTab(tab2,"Mass Histogram")
         
        # tabs.addTab(tab3, "Spill")
         self.setCentralWidget(tabs)
