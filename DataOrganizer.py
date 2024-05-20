@@ -72,7 +72,7 @@ class dataOrganizer:
         return self.vtx, self.vty, self.vtz, self.sid, self.EventID
     
     def grab_HitInfo(self):
-        return self.elementid, self.detectorid, self.selectedEvents, self.sid, self.hits
+        return self.elementid, self.detectorid, self.selectedEvents, self.sid, self.hits, self.EventID, self.target_track
     
 
 # #Testing
