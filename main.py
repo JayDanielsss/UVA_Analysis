@@ -17,42 +17,7 @@ from StripCharts import StripCharts
 from MassHist import MassHist
 
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
-
-
-# class OccPlotter(QWidget):
-#     def __init__(self,DC,Hodo,Prop):
-#         super().__init__()
-
-#         layout = QHBoxLayout()
-#         self.setLayout(layout)
-
-#         # Create a PlotWidget to display the hit matrix
-#         self.plot_widget = pg.PlotWidget()
-#         layout.addWidget(self.plot_widget,stretch = 2)
-       
-#         self.plot_Occ(DC,Title="Drift Chamber Occ")
-#         self.plot_widget = pg.PlotWidget()
-#         layout.addWidget(self.plot_widget,stretch = 2)
-
-#         self.plot_Occ(Hodo,Title="Hodo Occ")
-
-#         self.plot_widget = pg.PlotWidget()
-#         layout.addWidget(self.plot_widget,stretch = 2)
-#         self.plot_Occ(Prop,Title="Prop Occ")
-
-#         layout.addWidget(VertHists(),stretch = 8)
-
-
-#     def plot_Occ(self,Occ,Title):
-#         y,x = np.histogram(Occ.flatten(), bins=20)
-#         hist = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=(0, 0, 255, 80))
-#         self.plot_widget.setTitle(Title)
-#         self.plot_widget.addItem(hist)
-
-
-        
-        
+from PyQt5.QtWidgets import QWidget, QVBoxLayout 
 
 class HitMatrixPlotter(QWidget):
     def __init__(self, hitmatrix,Station,Plane, x_range=None, y_range=None,Title=None):
