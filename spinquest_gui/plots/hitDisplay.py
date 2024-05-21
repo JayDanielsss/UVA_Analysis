@@ -1,17 +1,12 @@
+# Native Package | sys
+import sys
+
+# External Packages | NumPy
 import numpy as np
-from DataReader import DataReader
-import sys
-import os
-import matplotlib.pyplot as plt
-from matplotlib import colors
-import math
 
 
-from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QLineEdit
+# External Packages | pyqtgraph
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtGui, QtCore
-
-import sys
 
 class HitDisplay:
     def __init__(self):

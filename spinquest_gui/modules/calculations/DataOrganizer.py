@@ -8,7 +8,8 @@ from QTracker import QTracker
 
 import time
 
-class dataOrganizer:
+class DataOrganizer:
+    
     def __init__(self):
         
         self.reco = None

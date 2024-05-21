@@ -15,11 +15,8 @@ import pyqtgraph as pg
 # Something | DataReader
 from DataReader import DataReader
 
-# Something | HitDisplay
-from hitDisplay import HitDisplay
-
 # Something | StripCharts
-from spinquest_gui.plots import StripCharts
+from spinquest_gui.plots.StripCharts import StripCharts
 
 # Physics
 

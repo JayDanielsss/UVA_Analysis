@@ -12,9 +12,6 @@ import sys
 # External Packages | PyQt5
 from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 
-from DataReader import DataReader
-from hitDisplay import HitDisplay
-
 # from MassHist import MassHist
 
 from spinquest_gui.tabs.tab1 import Tab1
