@@ -103,21 +103,16 @@ class HitMatrixPlotter(QWidget):
 
     def getStationOcc(self,detector,Plane):
         
-        geometery = np.loadtxt("geometery.csv", delimiter=",", dtype=str)
+        geometery = np.loadtxt('./geometry.csv', delimiter=",", dtype=str)
         
         PerEvent = np.zeros_like(detector)
         
-
         for i in range(len(detector)):
             for j in range(len(detector[0])):
                 PerEvent[i,j] = detector[i,j]/int(geometery[Plane[j]][1])
-                
-
 
         AvgOccPerSpill = np.average(PerEvent)
         TotalOccPerSpill = np.sum(detector)
-
-
 
         text = f"Occupancy\nAvg Hits per Event: {AvgOccPerSpill*100:.0f}%\nTotal Hits per Spill: {TotalOccPerSpill}\n"
         self.readout_label.setText(text)
@@ -477,10 +472,10 @@ class App(QMainWindow):
         
         tabs = QTabWidget()
         tab1 = Tab1()
-        tab2 = MassHist()
+        # tab2 = MassHist()
 
         tabs.addTab(tab1, "Main Display")
-        tabs.addTab(tab2,"Mass Histogram")
+        # tabs.addTab(tab2,"Mass Histogram")
         
        # tabs.addTab(tab3, "Spill")
         self.setCentralWidget(tabs)
