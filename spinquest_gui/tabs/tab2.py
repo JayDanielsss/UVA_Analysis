@@ -19,7 +19,7 @@ from DataReader import DataReader
 from hitDisplay import HitDisplay
 
 # Something | StripCharts
-from StripCharts import StripCharts
+from spinquest_gui.plots import StripCharts
 
 # Physics
 

@@ -32,7 +32,6 @@ class Tab1(QWidget):
         layout.addWidget(self.viewButton)
         self.setLayout(layout)
 
-
         self.data_reader = None
         self.plot_data = None
         self.previous_plot_data = None

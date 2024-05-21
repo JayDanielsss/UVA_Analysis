@@ -21,8 +21,7 @@ from hitDisplay import HitDisplay
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QTimer
 
-from StripCharts import StripCharts
-from MassHist import MassHist
+# from MassHist import MassHist
 
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout 
