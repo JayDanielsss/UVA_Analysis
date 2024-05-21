@@ -2,13 +2,18 @@ import numpy as np
 import uproot
 
 class DataReader:
+
     def __init__(self, filenames,grab):
+        
         self.filenames = filenames
         self.current_index = 0
 
         self.grab = grab
 
     def read_data(self):
+
+        print(f"INdex: {self.current_index}")
+        print(f"Filee name: {self.filenames[self.current_index]}")
         
 
         if self.grab == "VERTEX":
@@ -28,6 +33,7 @@ class DataReader:
             vtx_data = np.array([vtx0, vtx1, vty0, vty1, vtz0, vtz1]).T
             
             return vtx_data
+        
         elif self.grab == "HIT":
             filename = self.filenames[self.current_index]
             reco = np.load(filename,allow_pickle=True)
@@ -51,30 +57,43 @@ class DataReader:
             return ppx, ppy, ppz, npx, npy, npz      
 
         elif self.grab == "XVERTEX":
+
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
             reco = reco['arr_0']
             vtx = reco[:,21][reco[:,21]<1e6]
             return vtx
+        
         elif self.grab == "YVERTEX":
+
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
             reco = reco['arr_0']
             vty = reco[:,22][reco[:,22]<1e6]
             return vty
+        
         elif self.grab == "ZVERTEX":
+
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
             reco = reco['arr_0']
             vtz = reco[:,23][reco[:,23]<1e6]
             return vtz
+        
         elif self.grab == "EVENT":
+
+            print(self.filenames)
+            print(self.current_index)
+            print(self.filenames[self.current_index])
             filename = self.filenames[self.current_index]
+            print(f"FILENAME IS {filename}")
             reco = np.load(filename)
             reco = reco['arr_0']
             eid = reco[:,33]
             return eid
+        
         elif self.grab == "SPILL":
+
             filename = self.filenames[self.current_index]
             reco = np.load(filename)
             reco = reco['arr_0']

@@ -1,63 +1,72 @@
 # Native Package | os
 import os
 
-if not (os.path.exists("raw")):
-    path = os.path.join("raw")
-    os.mkdir(path)
-    print("> raw directory created, make sure the files from QTracker are sent here\n")
+from spinquest_gui.statics.constants import _DIRECTORY_DATA, _DIRECTORY_DATA_RAW, _DIRECTORY_DATA_RECONSTRUCTED, _SPINQUEST_GUI
+
+def check_reconstructed_directory():
+    
+    try:
+
+        path_to_spinquest_gui = f"{os.getcwd()}/{_SPINQUEST_GUI}"
+
+        if not (os.path.exists(path_to_spinquest_gui)):
+            os.mkdir(path_to_spinquest_gui)
+        
+        if not (os.path.exists(f"{path_to_spinquest_gui}/{_DIRECTORY_DATA}")):
+            os.mkdir(f"{path_to_spinquest_gui}/{_DIRECTORY_DATA}")
+
+        if not (os.path.exists(f"{path_to_spinquest_gui}/{_DIRECTORY_DATA}/{_DIRECTORY_DATA_RECONSTRUCTED}")):
+            os.mkdir(f"{path_to_spinquest_gui}/{_DIRECTORY_DATA}/{_DIRECTORY_DATA_RECONSTRUCTED}")
+
+        else:
+
+            print(f"> Path {path_to_spinquest_gui}/{_DIRECTORY_DATA}/{_DIRECTORY_DATA_RECONSTRUCTED} exists!")
+
+    except Exception as ERROR:
+        print(f"> [ERROR]: {ERROR}")
 
 def get_raw_directory():
+    """
+    ALl this function does is it references/finds the
+    directory 
+    /spinguest_gui/data/raw/
+    """
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    print(current_dir)
-    
     # Construct the path to the 'raw' directory
-    raw_dir = os.path.join(current_dir, '..', '..', 'raw')
 
-    print(raw_dir)
-
-    return raw_dir
-
-def get_event_vertex_data_directory():
-
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    print(current_dir)
-    
-    # Construct the path to the 'event_vertex_data' directory
-    event_vertex_dir = os.path.join(current_dir, '..', '..', 'event_vertex_data')
-
-    print(event_vertex_dir)
-
-    return event_vertex_dir
+    path_to_spinquest_gui = f"{os.getcwd()}/{_SPINQUEST_GUI}"
+    current_dir = f"{path_to_spinquest_gui}/{_DIRECTORY_DATA}/{_DIRECTORY_DATA_RAW}"
 
 
-def get_spill_vertex_means_directory():
+    return current_dir
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+def get_reconstructed_directory():
+    """
+    ALl this function does is it references/finds the
+    directory 
+    /spinguest_gui/data/reconstructed/
+    """
 
-    print(current_dir)
-    
-    # Construct the path to the 'event_vertex_data' directory
-    spill_vertex_dir = os.path.join(current_dir, '..', '..', 'event_vertex_data')
+    # Construct the path to the 'reconstructed' directory
 
-    print(spill_vertex_dir)
+    path_to_spinquest_gui = f"{os.getcwd()}/{_SPINQUEST_GUI}"
+    current_dir = f"{path_to_spinquest_gui}/{_DIRECTORY_DATA}/{_DIRECTORY_DATA_RECONSTRUCTED}"
 
-    return spill_vertex_dir
 
-def get_raw_contents():
+    return current_dir
+
+def get_reconstructed_contents():
    
-    # Construct the path to the 'raw' directory
-    raw_dir = get_raw_directory()
+    # Construct the path to the 'reconstructed' directory
+    reconstructed_dir = get_reconstructed_directory()
 
     try:
-        contents = os.listdir(raw_dir)
-    except FileNotFoundError:
-        contents = []
-        print(f"The directory {raw_dir} does not exist.")
 
-    #print(contents)
+        contents = os.listdir(reconstructed_dir)
+
+    except FileNotFoundError:
+
+        contents = []
+        print(f"The directory {reconstructed_dir} does not exist.")
     
     return contents
-

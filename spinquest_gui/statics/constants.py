@@ -19,3 +19,15 @@ _TAB_MAIN_NAME = "Main Display"
 
 # Tabs | StripCharts Tab
 _TAB_STRIPCHARTS = "StripCharts"
+
+#Directory Names | SpinQuest GUI
+_SPINQUEST_GUI = "spinquest_gui"
+
+# Directory Names | Data 
+_DIRECTORY_DATA = "data"
+
+# Directory Names | Data | Raw
+_DIRECTORY_DATA_RAW = "raw"
+
+# Directory Names | Data | Reconstructed
+_DIRECTORY_DATA_RECONSTRUCTED = "reconstructed"

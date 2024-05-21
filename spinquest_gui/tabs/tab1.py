@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt, QTimer
 from spinquest_gui.modules.calculations.DataReader import DataReader
 
 # Something | HitDisplay
-from spinquest_gui.plots.HitDisplay import HitDisplay
+from spinquest_gui.plots.hitDisplay import HitDisplay
 
 # Something | HitMatrixPlotter
 from spinquest_gui.plots.HitMatrixPlotter import HitMatrixPlotter
@@ -24,8 +24,11 @@ from spinquest_gui.plots.MyTable import MyTable
 from spinquest_gui.modules.directories.directory_health import get_reconstructed_contents, get_reconstructed_directory
 
 class Tab1(QWidget):
+
     def __init__(self):
+
         super().__init__()
+
         #layout = QGridLayout()
         layout = QVBoxLayout()  # Create one QVBoxLayout
         self.txtBox = QLineEdit(self)
@@ -50,8 +53,10 @@ class Tab1(QWidget):
         #Hitmatrix Plot
         filenames = sorted([filename for filename in self.reconstructed_folder_contents if filename.endswith(".npz")])
         self.fileNo = len(filenames)
+
         if (self.fileNo > 0):
             self.file = self.fileNo-1
+            print(f"SELF FILE IS: {self.file}")
             self.draw_hitmatrix()
 
         # Add update button
@@ -163,6 +168,7 @@ class Tab1(QWidget):
 
             layout = self.layout()
             layout.addLayout(self.hit_layout)
+            print(self.file)
             self.file += 1
 
     def deleteItemsOfLayout(self,layout):

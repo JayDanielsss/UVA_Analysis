@@ -3,23 +3,29 @@
 import sys
 import os
 import numpy as np
-import time
-from pyqtgraph.Qt import QtGui
-from random import randrange, uniform
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QApplication, QMainWindow
-from spinquest_gui.modules.calculations.DataReader import DataReader
-from types import NoneType
-import pyqtgraph as pg
 
-# Modules | Directories
-from spinquest_gui.modules.directories.directory_health import get_event_vertex_data_directory, get_spill_vertex_means_directory
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QApplication
+
+
+
+# module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'calculations'))
+# if module_path not in sys.path:
+#     sys.path.append(module_path)
+
+from spinquest_gui.modules.calculations.DataReader import DataReader
+from spinquest_gui.modules.directories.directory_health import get_reconstructed_directory
+
+import pyqtgraph as pg
 
 application = QApplication(sys.argv)
 
 class StripCharts(QWidget):
+
     def __init__(self):
+
         super().__init__()
+
         layout=QVBoxLayout()
         self.vtxPlot=pg.plot()
         self.vtyPlot=pg.plot()
@@ -60,23 +66,23 @@ class StripCharts(QWidget):
         
         self.reader = None
 
-        if not (os.path.exists("event_vertex_data")):
-            path = os.path.join("event_vertex_data")
-            os.mkdir(path)
-            with open("event_vertex_data/README.txt",'w') as README:
-                README.write("This directory contains npz files which each contain 4 numpy arrays saved as npy files.\n")
-                README.write("The 0th array contains event IDs.\n")
-                README.write("The 1st, 2nd, and 3rd arrays contain X, Y, and Z vertex positions respectively.\n")
-                README.write("The arrays are saved such that the Nth event ID corresponds to the Nth instance of vertex data.\n")
+        # if not (os.path.exists("event_vertex_data")):
+        #     path = os.path.join("event_vertex_data")
+        #     os.mkdir(path)
+        #     with open("event_vertex_data/README.txt",'w') as README:
+        #         README.write("This directory contains npz files which each contain 4 numpy arrays saved as npy files.\n")
+        #         README.write("The 0th array contains event IDs.\n")
+        #         README.write("The 1st, 2nd, and 3rd arrays contain X, Y, and Z vertex positions respectively.\n")
+        #         README.write("The arrays are saved such that the Nth event ID corresponds to the Nth instance of vertex data.\n")
 
-        if not (os.path.exists("SpillVertexMeans")):
-            path = os.path.join("SpillVertexMeans")
-            os.mkdir(path)
-            with open ("SpillVertexMeans/README.txt",'w') as README:
-                README.write("This directory contains npz files labeled by spill. Each file contains 7 0-dimensional arrays stored in npy files\n")
-                README.write("The 0th array contains the spill ID\n")
-                README.write("The 1st, 2nd, and 3rd arrays contain the mean X, Y, and Z vertex positions over all events in the spill respectively\n")
-                README.write("The 4th, 5th, and 6th arrays contain the standard deviations of X, Y, and Z vertex positions respectively\n")
+        # if not (os.path.exists("SpillVertexMeans")):
+        #     path = os.path.join("SpillVertexMeans")
+        #     os.mkdir(path)
+        #     with open ("SpillVertexMeans/README.txt",'w') as README:
+        #         README.write("This directory contains npz files labeled by spill. Each file contains 7 0-dimensional arrays stored in npy files\n")
+        #         README.write("The 0th array contains the spill ID\n")
+        #         README.write("The 1st, 2nd, and 3rd arrays contain the mean X, Y, and Z vertex positions over all events in the spill respectively\n")
+        #         README.write("The 4th, 5th, and 6th arrays contain the standard deviations of X, Y, and Z vertex positions respectively\n")
 
 
         self.MAX_SPILLS = 5
@@ -93,11 +99,11 @@ class StripCharts(QWidget):
         self.position = 0
         self.spillsDisplayed = 0
 
-        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         if (self.fileCount == 0 ):
             print("Your Reconstructed directory is empty, make sure the files from QTracker are being sent there\n")
-        self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
+        self.reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in self.filenames], "EVENT")
         while (self.currentFile < self.fileCount):
             if (self.currentFile >= self.MAX_SPILLS):
                 self.vtxPlot.removeItem(self.xScatter[self.position])
@@ -116,7 +122,7 @@ class StripCharts(QWidget):
         timer.start(500)    
 
     def UpdateChart(self):
-        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         if (self.fileCount > self.currentFile):
             if (self.currentFile >= self.MAX_SPILLS):
@@ -129,7 +135,7 @@ class StripCharts(QWidget):
                 self.vtxSPlot.removeItem(self.xErr[self.position])
                 self.vtySPlot.removeItem(self.yErr[self.position])
                 self.vtzSPlot.removeItem(self.zErr[self.position])
-            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in self.filenames], "EVENT")
             self.DrawSpill()
 
 
@@ -158,9 +164,11 @@ class StripCharts(QWidget):
             self.currentFile = max(self.currentFile-self.MAX_SPILLS,0)
             self.position = 0
             self.spillsDisplayed = 0
-            self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+            self.filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+            print(self.filenames)
             self.fileCount = len(self.filenames)
-            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
+            print([os.path.join(get_reconstructed_directory(), filename) for filename in self.filenames])
+            self.reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in self.filenames], "EVENT")
             while (self.currentFile < self.fileCount):
                 self.DrawSpill()
     
@@ -212,8 +220,8 @@ class StripCharts(QWidget):
         self.vtzSPlot.addItem(self.zSScatter[self.position])
         self.vtzSPlot.addItem(self.zErr[self.position])
         self.spillString = str(self.sidData)
-        np.savez(f'{get_event_vertex_data_directory()}{self.spillString}.npz', self.eidData,self.vtxData,self.vtyData,self.vtzData)
-        np.savez(f'{get_spill_vertex_means_directory()}{self.spillString}.npz', self.sidData,self.vtxMean,self.vtyMean,self.vtzMean,self.vtxSTD,self.vtySTD,self.vtzSTD)
+        # np.savez(f'{get_event_vertex_data_directory()}{self.spillString}.npz', self.eidData,self.vtxData,self.vtyData,self.vtzData)
+        # np.savez(f'{get_spill_vertex_means_directory()}{self.spillString}.npz', self.sidData,self.vtxMean,self.vtyMean,self.vtzMean,self.vtxSTD,self.vtySTD,self.vtzSTD)
         self.currentFile += 1
         self.position += 1
         self.position = self.position % self.MAX_SPILLS

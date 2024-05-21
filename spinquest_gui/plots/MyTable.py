@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 # Something | DataReader
 from spinquest_gui.modules.calculations.DataReader import DataReader
+from spinquest_gui.modules.directories.directory_health import get_reconstructed_directory
 
 class MyTable(QTableWidget):
     def __init__(self, rows, columns):
@@ -19,15 +20,15 @@ class MyTable(QTableWidget):
 
     def setData(self,fileNumber):
 
-        #Direct Data
-        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MetaDATA")
+        # Direct Data
+        filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"MetaDATA")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
 
-        # #Momentum
-        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MOMENTUM")
+        # Momentum
+        filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"MOMENTUM")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
         meanPX = np.mean(self.plot_data[0])
@@ -37,8 +38,8 @@ class MyTable(QTableWidget):
 
         del(self.plot_data)
 
-        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MetaDATA")
+        filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"MetaDATA")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
         RunID = self.plot_data[0][0]
