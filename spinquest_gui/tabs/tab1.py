@@ -14,6 +14,12 @@ from DataReader import DataReader
 # Something | HitDisplay
 from hitDisplay import HitDisplay
 
+# Something | HitMatrixPlotter
+from HitMatrixPlotter import HitMatrixPlotter
+
+# Something | MyTable
+from MyTable import MyTable
+
 class Tab1(QWidget):
     def __init__(self):
         super().__init__()
