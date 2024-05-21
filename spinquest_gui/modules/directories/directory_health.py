@@ -1,23 +1,23 @@
 # Native Package | os
 import os
 
-if not (os.path.exists("reconstructed")):
-    path = os.path.join("reconstructed")
+if not (os.path.exists("raw")):
+    path = os.path.join("raw")
     os.mkdir(path)
-    print("> reconstructed directory created, make sure the files from QTracker are sent here\n")
+    print("> raw directory created, make sure the files from QTracker are sent here\n")
 
-def get_reconstructed_directory():
+def get_raw_directory():
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     print(current_dir)
     
-    # Construct the path to the 'reconstructed' directory
-    reconstructed_dir = os.path.join(current_dir, '..', '..', 'reconstructed')
+    # Construct the path to the 'raw' directory
+    raw_dir = os.path.join(current_dir, '..', '..', 'raw')
 
-    print(reconstructed_dir)
+    print(raw_dir)
 
-    return reconstructed_dir
+    return raw_dir
 
 def get_event_vertex_data_directory():
 
@@ -46,17 +46,18 @@ def get_spill_vertex_means_directory():
 
     return spill_vertex_dir
 
-def get_reconstructed_contents():
+def get_raw_contents():
    
-    # Construct the path to the 'reconstructed' directory
-    reconstructed_dir = get_reconstructed_directory()
+    # Construct the path to the 'raw' directory
+    raw_dir = get_raw_directory()
 
     try:
-        contents = os.listdir(reconstructed_dir)
+        contents = os.listdir(raw_dir)
     except FileNotFoundError:
         contents = []
-        print(f"The directory {reconstructed_dir} does not exist.")
+        print(f"The directory {raw_dir} does not exist.")
 
-    print(contents)
+    #print(contents)
     
     return contents
+

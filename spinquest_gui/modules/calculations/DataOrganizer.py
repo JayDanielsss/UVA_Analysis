@@ -2,11 +2,25 @@
 
 # Native Package | os
 import os
+import sys
+import time
+import glob
 
 # External Packages | NumPy
 import numpy as np
 
-from spinquest_gui.modules.calculations.QTracker import QTracker
+from QTracker import QTracker
+
+# Modules | Directories
+#from spinquest_gui.modules.directories.directory_health import get_raw_contents, get_raw_directory
+
+# module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'directories'))
+# if module_path not in sys.path:
+#     sys.path.append(module_path)
+
+# # Now you can import the functions
+# from directory_health import get_raw_contents, get_raw_directory
+
 
 class DataOrganizer:
     
@@ -18,19 +32,36 @@ class DataOrganizer:
         self.metadata = None
         self.detectorid = None
         self.elementid = None
+    def get_raw_directory():
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        print(current_dir)
+        
+        # Construct the path to the 'raw' directory
+        raw_dir = os.path.join(current_dir, '..', '..', 'raw')
+
+        print(raw_dir)
+
+        return raw_dir
         
         
         
     def organizeData(self):
-        #finds the raw file
-        raw_files = [os.path.join("Raw", f) for f in os.listdir("Raw") if os.path.isfile(os.path.join("Raw", f))]
-        #sort by order of time mod
+        # Find the raw directory
+        raw_dir = DataOrganizer.get_raw_directory()
+        print("Raw Directory in organizeData:", raw_dir)
+
+        # List all files in the raw directory
+        raw_files = [os.path.join(raw_dir, f) for f in os.listdir(raw_dir) if os.path.isfile(os.path.join(raw_dir, f))]
+        print("Raw Files:", raw_files)
+
+        # Sort by order of time modified, newest first
         raw_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-
-
-        most_recent_raw_file = raw_files[0]
-
-
+        
+        # Get the most recent raw file
+        most_recent_raw_file = raw_files[0] if raw_files else None
+        print("Most Recent Raw File:", most_recent_raw_file)
         #Do the same for the TSV file here
 
         #Pull information from QTracker
@@ -100,10 +131,10 @@ class DataOrganizer:
         return self.mom
     
 
-# #Testing
+# # #Testing
 # t0 = time.time()
 #  #Create an instance of dataOrganizer
-# organizer = dataOrganizer()
+# organizer = DataOrganizer()
 
 # # Call the organizeData() method to populate the necessary attributes
 # organizer.organizeData()
