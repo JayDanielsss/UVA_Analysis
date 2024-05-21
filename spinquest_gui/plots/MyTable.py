@@ -20,14 +20,14 @@ class MyTable(QTableWidget):
     def setData(self,fileNumber):
 
         #Direct Data
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MetaDATA")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
 
         # #Momentum
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MOMENTUM")
+        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MOMENTUM")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
         meanPX = np.mean(self.plot_data[0])
@@ -37,8 +37,8 @@ class MyTable(QTableWidget):
 
         del(self.plot_data)
 
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MetaDATA")
         self.data_reader.current_index = fileNumber
         self.plot_data = self.data_reader.read_data()
         RunID = self.plot_data[0][0]

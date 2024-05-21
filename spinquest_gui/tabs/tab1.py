@@ -20,6 +20,9 @@ from spinquest_gui.plots.HitMatrixPlotter import HitMatrixPlotter
 # Something | MyTable
 from spinquest_gui.plots.MyTable import MyTable
 
+# Modules | Directories
+from spinquest_gui.modules.directories.directory_health import get_reconstructed_contents, get_reconstructed_directory
+
 class Tab1(QWidget):
     def __init__(self):
         super().__init__()
@@ -39,11 +42,13 @@ class Tab1(QWidget):
         self.file = 0
         self.hit_layout_exists = False
 
+        self.reconstructed_folder_contents = get_reconstructed_contents()
+
         # self.momentumPlot = StaticHistogram(self.plot_data)
         # layout.addWidget(self.momentumPlot)
 
         #Hitmatrix Plot
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        filenames = sorted([filename for filename in self.reconstructed_folder_contents if filename.endswith(".npz")])
         self.fileNo = len(filenames)
         if (self.fileNo > 0):
             self.file = self.fileNo-1
@@ -68,12 +73,12 @@ class Tab1(QWidget):
        
 
     def draw_hitmatrix(self):
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        filenames = sorted([filename for filename in self.reconstructed_folder_contents if filename.endswith(".npz")])
         self.fileNo = len(filenames)
         if (self.file < self.fileNo):
             if (self.hit_layout_exists):
                 self.deleteItemsOfLayout(self.hit_layout)
-            self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"HIT")
+            self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"HIT")
             self.data_reader.current_index = self.file
             self.plot_data = self.data_reader.read_data()
             self.hits = self.plot_data[1]
@@ -173,9 +178,9 @@ class Tab1(QWidget):
         if (spillString.isdigit()):
             spill = int(spillString)
             self.file = 0
-            filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+            filenames = sorted([filename for filename in self.reconstructed_folder_contents if filename.endswith(".npz")])
             self.fileNo = len(filenames)
-            self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"SPILL")
+            self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"SPILL")
             for i in range (self.fileNo):
                 self.data_reader.current_index = self.file
                 sidData = self.data_reader.read_data()[0]

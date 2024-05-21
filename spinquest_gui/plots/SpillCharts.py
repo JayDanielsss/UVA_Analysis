@@ -59,7 +59,7 @@ class SpillCharts(QWidget):
                 README.write("The 4th, 5th, and 6th arrays contain the standard deviations of X, Y, and Z vertex positions respectively\n")
 
 
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         while (self.fileCount > self.currentFile):
             if (self.currentFile >= self.MAX_SPILLS):
@@ -69,7 +69,7 @@ class SpillCharts(QWidget):
                 self.vtxSPlot.removeItem(self.xErr[self.position])
                 self.vtySPlot.removeItem(self.yErr[self.position])
                 self.vtzSPlot.removeItem(self.zErr[self.position])
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
             self.DrawSpill()
 
         timer = QtCore.QTimer(self)
@@ -77,7 +77,7 @@ class SpillCharts(QWidget):
         timer.start(500)
 
     def UpdateChart(self):
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         if (self.fileCount > self.currentFile):
             if (self.currentFile >= self.MAX_SPILLS):
@@ -87,7 +87,7 @@ class SpillCharts(QWidget):
                 self.vtxSPlot.removeItem(self.xErr[self.position])
                 self.vtySPlot.removeItem(self.yErr[self.position])
                 self.vtzSPlot.removeItem(self.zErr[self.position])
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
             self.DrawSpill()
 
     def SetSpillWindow(self):
@@ -109,9 +109,9 @@ class SpillCharts(QWidget):
             self.currentFile = max(self.currentFile-self.MAX_SPILLS,0)
             self.position = 0
             self.spillsDisplayed = 0
-            self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+            self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
             self.fileCount = len(self.filenames)
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
             while (self.fileCount > self.currentFile):
                 self.DrawSpill()
 

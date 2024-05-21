@@ -56,10 +56,10 @@ class StripCharts(QWidget):
         
         self.reader = None
 
-        if not (os.path.exists("EventVertexData")):
-            path = os.path.join("EventVertexData")
+        if not (os.path.exists("event_vertex_data")):
+            path = os.path.join("event_vertex_data")
             os.mkdir(path)
-            with open("EventVertexData/README.txt",'w') as README:
+            with open("event_vertex_data/README.txt",'w') as README:
                 README.write("This directory contains npz files which each contain 4 numpy arrays saved as npy files.\n")
                 README.write("The 0th array contains event IDs.\n")
                 README.write("The 1st, 2nd, and 3rd arrays contain X, Y, and Z vertex positions respectively.\n")
@@ -89,11 +89,11 @@ class StripCharts(QWidget):
         self.position = 0
         self.spillsDisplayed = 0
 
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         if (self.fileCount == 0 ):
             print("Your Reconstructed directory is empty, make sure the files from QTracker are being sent there\n")
-        self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+        self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
         while (self.currentFile < self.fileCount):
             if (self.currentFile >= self.MAX_SPILLS):
                 self.vtxPlot.removeItem(self.xScatter[self.position])
@@ -112,7 +112,7 @@ class StripCharts(QWidget):
         timer.start(500)    
 
     def UpdateChart(self):
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
         if (self.fileCount > self.currentFile):
             if (self.currentFile >= self.MAX_SPILLS):
@@ -125,7 +125,7 @@ class StripCharts(QWidget):
                 self.vtxSPlot.removeItem(self.xErr[self.position])
                 self.vtySPlot.removeItem(self.yErr[self.position])
                 self.vtzSPlot.removeItem(self.zErr[self.position])
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
             self.DrawSpill()
 
 
@@ -154,9 +154,9 @@ class StripCharts(QWidget):
             self.currentFile = max(self.currentFile-self.MAX_SPILLS,0)
             self.position = 0
             self.spillsDisplayed = 0
-            self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+            self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
             self.fileCount = len(self.filenames)
-            self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+            self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
             while (self.currentFile < self.fileCount):
                 self.DrawSpill()
     
@@ -208,8 +208,8 @@ class StripCharts(QWidget):
         self.vtzSPlot.addItem(self.zSScatter[self.position])
         self.vtzSPlot.addItem(self.zErr[self.position])
         self.spillString = str(self.sidData)
-        np.savez('EventVertexData/' + self.spillString + '.npz',self.eidData,self.vtxData,self.vtyData,self.vtzData)
-        np.savez('SpillVertexMeans/' + self.spillString + '.npz',self.sidData,self.vtxMean,self.vtyMean,self.vtzMean,self.vtxSTD,self.vtySTD,self.vtzSTD)
+        np.savez('event_vertex_data/' + self.spillString + '.npz',self.eidData,self.vtxData,self.vtyData,self.vtzData)
+        np.savez('spill_vertex_means/' + self.spillString + '.npz',self.sidData,self.vtxMean,self.vtyMean,self.vtzMean,self.vtxSTD,self.vtySTD,self.vtzSTD)
         self.currentFile += 1
         self.position += 1
         self.position = self.position % self.MAX_SPILLS

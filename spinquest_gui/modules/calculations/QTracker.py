@@ -390,8 +390,8 @@ class QTracker:
 
         # The QTracker output data is saved to a NumPy file for further analysis,
 
-        base_filename = 'Reconstructed/' + os.path.basename(root_file).split('.')[0]
-        os.makedirs("Reconstructed", exist_ok=True)  # Ensure the output directory exists.
+        base_filename = 'reconstructed/' + os.path.basename(root_file).split('.')[0]
+        os.makedirs("reconstructed", exist_ok=True)  # Ensure the output directory exists.
         np.savez(base_filename + '_reconstructed', output_data, hits, target_track)  # Save the final dataset.
         
         print(f"File {base_filename}_reconstructed.npz has been saved successfully.\n")

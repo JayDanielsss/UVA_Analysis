@@ -100,8 +100,8 @@ class DataReader:
 
 # import sys
 # import os
-# filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
-# data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"MetaDATA")
+# filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npy")])
+# data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"MetaDATA")
 # plot_data = data_reader.read_data()
 
 

@@ -51,10 +51,10 @@ class VertHists(QWidget):
             zOccurences = np.zeros(paraBinEdges.size-1)
             currentFile = 0
         while self.runButton.isChecked():
-            self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npy")])
+            self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npy")])
             self.fileCount = len(self.filenames)
             if (self.fileCount > currentFile):
-                self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "EVENT")
+                self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "EVENT")
                 self.reader.current_index = currentFile
                 self.reader.grab = "EVENT"
                 self.eidData = self.reader.read_data()

@@ -21,7 +21,7 @@ from spinquest_gui.plots.StripCharts import StripCharts
 # Physics
 
 ### Lorentz Dot Product
-from modules.physics.calculate_physics import lorentz_dot_product
+from spinquest_gui.modules.physics.calculate_physics import lorentz_dot_product
 
 class Tab2(QWidget):
     def __init__(self):
@@ -71,9 +71,9 @@ class MassHist(QWidget):
         self.barItemExists = False
         self.viewingOldSpill = False
 
-        self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
         self.fileCount = len(self.filenames)
-        self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "MOMENTUM")
+        self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "MOMENTUM")
 
         if (self.fileCount > 0):
             self.currentFile = self.fileCount-1
@@ -86,12 +86,12 @@ class MassHist(QWidget):
     
     def drawHist(self):
         if not (self.viewingOldSpill):
-            self.filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+            self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
             self.fileCount = len(self.filenames)
             if (self.currentFile < self.fileCount):
                 if (self.barItemExists):
                     self.hist.removeItem(self.bar)
-                self.reader = DataReader([os.path.join("Reconstructed", filename) for filename in self.filenames], "MOMENTUM")
+                self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "MOMENTUM")
                 self.reader.current_index = self.currentFile
                 self.momData = self.reader.read_data()
                 self.reader.grab = "EVENT"
@@ -124,9 +124,9 @@ class MassHist(QWidget):
         if (spillString.isdigit()):
             spill = int(spillString)
             self.currentFile = 0
-            filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+            filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
             self.fileCount = len(filenames)
-            self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"SPILL")
+            self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"SPILL")
             for i in range (self.fileCount):
                 self.data_reader.current_index = self.currentFile
                 sidData = self.data_reader.read_data()[0]
@@ -142,9 +142,9 @@ class MassHist(QWidget):
 
     def leaveSpill(self):
         self.viewingOldSpill = False
-        filenames = sorted([filename for filename in os.listdir("Reconstructed") if filename.endswith(".npz")])
+        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
         self.fileCount = len(filenames)
-        self.data_reader = DataReader([os.path.join("Reconstructed", filename) for filename in filenames],"SPILL")
+        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"SPILL")
         if (self.fileCount > 0):
             self.currentFile = self.fileCount-1
         self.drawHist()
