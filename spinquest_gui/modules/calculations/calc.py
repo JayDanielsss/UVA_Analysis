@@ -1,7 +1,11 @@
-import numba
+
+# External Packages | NumPy
 import numpy as np
+
+# External Packages | Numba
 from numba import njit, prange
-from DataOrganizer import dataOrganizer
+
+from DataOrganizer import DataOrganizer
 
 # Define the standalone functions
 @njit
@@ -81,7 +85,7 @@ class Calc:
         return calcVariables(self.mom)
 
 # Create an instance of dataOrganizer
-organizer = dataOrganizer()
+organizer = DataOrganizer()
 
 # Call the organizeData() method to populate the necessary attributes
 organizer.organizeData()

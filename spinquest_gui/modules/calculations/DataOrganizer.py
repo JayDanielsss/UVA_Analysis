@@ -1,4 +1,4 @@
-#Made by Jay for Organizing and pulling modified QTracker into Gui
+# Made by Jay for Organizing and pulling modified QTracker into Gui
 
 import numpy as np
 import os

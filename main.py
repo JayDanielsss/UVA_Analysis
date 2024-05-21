@@ -9,25 +9,18 @@ import os
 # Native Package | sys
 import sys
 
-# External Packages | 
-from spinquest_gui.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
+# External Packages | PyQt5
+from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 
-from PyQt5.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem,QLabel,QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QPushButton, QLineEdit
-import pyqtgraph as pg
-import numpy as np
 from DataReader import DataReader
 from hitDisplay import HitDisplay
 
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt, QTimer
-
 # from MassHist import MassHist
-
-
-from PyQt5.QtWidgets import QWidget, QVBoxLayout 
 
 from spinquest_gui.tabs.tab1 import Tab1
 from spinquest_gui.tabs.tab2 import Tab2
+
+from spinquest_gui.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
 
 # from spinquest_gui.plots.StripChartsWindow import StripChartWindow
 
