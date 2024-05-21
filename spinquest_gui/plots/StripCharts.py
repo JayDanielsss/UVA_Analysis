@@ -11,6 +11,10 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QAppli
 from spinquest_gui.modules.calculations.DataReader import DataReader
 from types import NoneType
 import pyqtgraph as pg
+
+# Modules | Directories
+from spinquest_gui.modules.directories.directory_health import get_event_vertex_data_directory, get_spill_vertex_means_directory
+
 application = QApplication(sys.argv)
 
 class StripCharts(QWidget):
@@ -208,8 +212,8 @@ class StripCharts(QWidget):
         self.vtzSPlot.addItem(self.zSScatter[self.position])
         self.vtzSPlot.addItem(self.zErr[self.position])
         self.spillString = str(self.sidData)
-        np.savez('event_vertex_data/' + self.spillString + '.npz',self.eidData,self.vtxData,self.vtyData,self.vtzData)
-        np.savez('spill_vertex_means/' + self.spillString + '.npz',self.sidData,self.vtxMean,self.vtyMean,self.vtzMean,self.vtxSTD,self.vtySTD,self.vtzSTD)
+        np.savez(f'{get_event_vertex_data_directory()}{self.spillString}.npz', self.eidData,self.vtxData,self.vtyData,self.vtzData)
+        np.savez(f'{get_spill_vertex_means_directory()}{self.spillString}.npz', self.sidData,self.vtxMean,self.vtyMean,self.vtzMean,self.vtxSTD,self.vtySTD,self.vtzSTD)
         self.currentFile += 1
         self.position += 1
         self.position = self.position % self.MAX_SPILLS
