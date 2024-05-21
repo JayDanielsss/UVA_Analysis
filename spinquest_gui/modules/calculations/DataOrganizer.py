@@ -1,12 +1,12 @@
 # Made by Jay for Organizing and pulling modified QTracker into Gui
 
-import numpy as np
+# Native Package | os
 import os
-import sys
-import uproot
-from QTracker import QTracker
 
-import time
+# External Packages | NumPy
+import numpy as np
+
+from spinquest_gui.modules.calculations.QTracker import QTracker
 
 class DataOrganizer:
     

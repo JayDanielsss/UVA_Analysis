@@ -8,7 +8,7 @@ import numpy as np
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 # Something | DataReader
-from DataReader import DataReader
+from spinquest_gui.modules.calculations.DataReader import DataReader
 
 class MyTable(QTableWidget):
     def __init__(self, rows, columns):

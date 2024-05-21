@@ -8,7 +8,7 @@ from pyqtgraph.Qt import QtGui
 from random import randrange, uniform
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QApplication, QMainWindow
-from DataReader import DataReader
+from spinquest_gui.modules.calculations.DataReader import DataReader
 from types import NoneType
 import pyqtgraph as pg
 application = QApplication(sys.argv)

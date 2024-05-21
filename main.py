@@ -12,7 +12,7 @@ import sys
 # External Packages | PyQt5
 from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 
-# from MassHist import MassHist
+# from spinquest_gui.plots.MassHist import MassHist
 
 from spinquest_gui.tabs.tab1 import Tab1
 from spinquest_gui.tabs.tab2 import Tab2

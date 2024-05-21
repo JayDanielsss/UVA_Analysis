@@ -5,7 +5,7 @@ import numpy as np
 # External Packages | Numba
 from numba import njit, prange
 
-from UVA_Analysis.spinquest_gui.modules.calculations.DataOrganizer import DataOrganizer
+from spinquest_gui.modules.calculations.DataOrganizer import DataOrganizer
 
 # Define the standalone functions
 @njit

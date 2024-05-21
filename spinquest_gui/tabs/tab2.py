@@ -13,7 +13,7 @@ from PyQt5.QtCore import Qt, QTimer
 import pyqtgraph as pg
 
 # Something | DataReader
-from DataReader import DataReader
+from spinquest_gui.modules.calculations.DataReader import DataReader
 
 # Something | StripCharts
 from spinquest_gui.plots.StripCharts import StripCharts

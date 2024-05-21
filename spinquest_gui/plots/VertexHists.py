@@ -5,7 +5,7 @@ from pyqtgraph.Qt import QtGui, QtCore
 from random import randrange, uniform
 from PyQt5 import QtTest
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton
-from DataReader import DataReader
+from spinquest_gui.modules.calculations.DataReader import DataReader
 import pyqtgraph as pg
 
 class VertHists(QWidget):

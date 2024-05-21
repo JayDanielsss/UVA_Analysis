@@ -9,10 +9,10 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLin
 from PyQt5.QtCore import Qt, QTimer
 
 # Something | DataReader
-from DataReader import DataReader
+from spinquest_gui.modules.calculations.DataReader import DataReader
 
 # Something | HitDisplay
-from hitDisplay import HitDisplay
+from spinquest_gui.plots.HitDisplay import HitDisplay
 
 # Something | HitMatrixPlotter
 from spinquest_gui.plots.HitMatrixPlotter import HitMatrixPlotter

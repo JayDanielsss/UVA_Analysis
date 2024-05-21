@@ -1,11 +1,17 @@
+# Native Package | os
 import os
+
+# External Packages | NumPy
 import numpy as np
-from pyqtgraph.Qt import QtGui
-from random import randrange, uniform
+
+# External Packages | PyQt5
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QApplication, QMainWindow
-from DataReader import DataReader
+
+# External Packages | pyqtgraph
 import pyqtgraph as pg
+
+from spinquest_gui.modules.calculations.DataReader import DataReader
 
 # Physics
 
