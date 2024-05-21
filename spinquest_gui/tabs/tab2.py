@@ -5,8 +5,12 @@ import os
 import numpy as np
 
 # External Packages | PyQTt5
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit
 from PyQt5.QtCore import Qt, QTimer
+
+# External Packages | pyqtgraph
+import pyqtgraph as pg
 
 # Something | DataReader
 from DataReader import DataReader
