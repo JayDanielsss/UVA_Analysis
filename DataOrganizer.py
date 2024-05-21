@@ -44,9 +44,31 @@ class dataOrganizer:
             targetTrackProbabilty = self.reco[:,31]
             dumpTrackProbabilty = self.reco[:,30]
 
-            self.px = np.concatenate((self.reco[15][abs(self.reco[15]) < 120],self.reco[18][abs(self.reco[18]) < 120]))
-            self.py = np.concatenate((self.reco[16][abs(self.reco[16]) < 120],self.reco[19][abs(self.reco[19]) < 120]))
-            self.pz = np.concatenate((self.reco[17][abs(self.reco[17]) < 120],self.reco[20][abs(self.reco[20]) < 120])) 
+            #self.mom = self.reco[15:21][abs(self.reco[15:21]) < 120]
+        
+            sub_array = self.reco[15:21]
+            self.mom = np.where(abs(sub_array) < 120, sub_array, 0)
+            #self.mom = np.reshape[]
+            #self.mom = self.mom.reshape(-1,6)
+            # px_mup = self.reco[15][abs(self.reco[15]) < 120]
+            # py_mup = self.reco[16][abs(self.reco[16]) < 120]
+            # pz_mup = self.reco[17][abs(self.reco[17]) < 120]
+
+            # px_mum = self.reco[18][abs(self.reco[18]) < 120]
+            # py_mum = self.reco[19][abs(self.reco[19]) < 120]
+            # pz_mum = self.reco[20][abs(self.reco[20]) < 120]
+
+            # self.px = np.column_stack((px_mup,px_mum))
+            # self.py = np.column_stack((py_mup,py_mum))
+            # self.pz = np.column_stack((pz_mup,pz_mum))
+            
+            
+            
+            
+            
+            # self.px = np.concatenate((self.reco[15][abs(self.reco[15]) < 120],self.reco[18][abs(self.reco[18]) < 120]))
+            # self.py = np.concatenate((self.reco[16][abs(self.reco[16]) < 120],self.reco[19][abs(self.reco[19]) < 120]))
+            # self.pz = np.concatenate((self.reco[17][abs(self.reco[17]) < 120],self.reco[20][abs(self.reco[20]) < 120])) 
 
             self.vtx = self.reco[:,21][self.reco[:,21]<1e6]
             self.vty = self.reco[:,22][self.reco[:,22]<1e6]
@@ -73,6 +95,8 @@ class dataOrganizer:
     
     def grab_HitInfo(self):
         return self.elementid, self.detectorid, self.selectedEvents, self.sid, self.hits, self.EventID, self.target_track
+    def grab_mom(self):
+        return self.mom
     
 
 # #Testing
