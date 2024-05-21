@@ -1,5 +1,14 @@
+#####################
+### SpinQuest GUI ###
+###  J, S, M, D   ###
+#####################
+
+
 import sys
 import os
+
+from spinquest_gui.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
+
 if not (os.path.exists("Reconstructed")):
             path = os.path.join("Reconstructed")
             os.mkdir(path)
@@ -68,7 +77,10 @@ class HitMatrixPlotter(QWidget):
 
     def getStationOcc(self,detector,Plane):
         
-        geometery = np.loadtxt('./geometry.csv', delimiter=",", dtype=str)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        csv_path = os.path.join(current_dir, 'spinquest_gui', 'statics', 'geometery.csv')
+
+        geometery = np.loadtxt(csv_path, delimiter = ",", dtype = str)
         
         PerEvent = np.zeros_like(detector)
         
@@ -424,26 +436,43 @@ class StripChartWindow(QMainWindow):
         tabs.addTab(tab2, "StripCharts")
         self.setCentralWidget(tabs)
 
+# PyQT Window | Main Window
 class App(QMainWindow):
+
     def __init__(self):
+
         super().__init__()
-        self.title = 'SpinQuest Display'
-        self.left = 0
-        self.top = 0
-        self.width = 800
-        self.height = 400
+
+        # Set the name of the application:
+        self.title = _APPLICATION_NAME
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+
+        # Configure the geometry of the application window:
+        self.window_left = 0
+        self.window_top = 0
+        self.window_width = _WINDOW_MAIN_APP_WIDTH
+        self.window_height = _WINDOW_MAIN_APP_HEIGHT
+        self.setGeometry(self.window_left, self.window_top, self.window_width, self.window_height)
+
+        # Initalize additional UI:
+        self.initializeUI()
+
+    def initializeUI(self):
+
+        # Initialize PyQT's "central widget"
+        self.central_widget = QTabWidget()
+        self.setCentralWidget(self.central_widget)
+
+        # Initialize the central widget's tabs:
+        # self.tab1 = Tab1()
         
-        tabs = QTabWidget()
         tab1 = Tab1()
         # tab2 = MassHist()
 
-        tabs.addTab(tab1, "Main Display")
-        # tabs.addTab(tab2,"Mass Histogram")
+        self.central_widget.addTab(tab1, "Main Display")
+        # self.central_widget.addTab(tab2,"Mass Histogram")
         
        # tabs.addTab(tab3, "Spill")
-        self.setCentralWidget(tabs)
 
 
 if __name__ == "__main__":
