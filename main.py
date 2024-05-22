@@ -69,11 +69,11 @@ class App(QMainWindow):
         tab1_instance = Tab1()
         tab1_instance.tab(self.organizer)
         #tab2 = Tab2()
-        self.tab2_instance = Tab2(self.organizer)
+       # self.tab2_instance = Tab2(self.organizer)
 
         #self.central_widget.addTab(tab1, "Main Display")
         tab_widget.addTab(tab1_instance,"Main Display")
-        tab_widget.addTab(self.tab2_instance, "Mass Histogram")
+        #tab_widget.addTab(self.tab2_instance, "Mass Histogram")
         self.setCentralWidget(tab_widget)
        # self.central_widget.addTab(tab2, "Strip Charts")
         # self.central_widget.addTab(tab2,"Mass Histogram")
