@@ -6,8 +6,9 @@ import os
 # External Packages | NumPy
 import numpy as np
 
+# Modules | Directories
 from spinquest_gui.modules.calculations.QTracker import QTracker
-
+from spinquest_gui.modules.directories.directory_health import get_raw_contents, get_reconstructed_directory
 class DataOrganizer:
     
     def __init__(self):
@@ -23,12 +24,19 @@ class DataOrganizer:
         
     def organizeData(self):
         #finds the raw file
-        raw_files = [os.path.join("Raw", f) for f in os.listdir("Raw") if os.path.isfile(os.path.join("Raw", f))]
-        #sort by order of time mod
-        raw_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
 
+        raw_files = get_raw_contents()
 
-        most_recent_raw_file = raw_files[0]
+        #Save the number of files in the directory as an attribute
+        self.fileCount = len(raw_files)
+
+        # Get the most recent file path
+        if raw_files:
+            most_recent_raw_file = raw_files[0]
+            #print("Most recent file:", most_recent_raw_file)
+        else:
+            most_recent_raw_file = None
+            #print("The directory is empty")
 
 
         #Do the same for the TSV file here
@@ -41,6 +49,7 @@ class DataOrganizer:
             self.reco, self.hits, self.target_track = QTracker.tracker(predictions, filt, self.hits, drift,self.metadata, root_file)
 
             self.sid = self.reco[:,34]
+            self.rid = self.reco[:,32]
             self.EventID = self.reco[:,33]
             targetTrackProbabilty = self.reco[:,31]
             dumpTrackProbabilty = self.reco[:,30]
@@ -67,9 +76,12 @@ class DataOrganizer:
             
             
             
-            # self.px = np.concatenate((self.reco[15][abs(self.reco[15]) < 120],self.reco[18][abs(self.reco[18]) < 120]))
-            # self.py = np.concatenate((self.reco[16][abs(self.reco[16]) < 120],self.reco[19][abs(self.reco[19]) < 120]))
-            # self.pz = np.concatenate((self.reco[17][abs(self.reco[17]) < 120],self.reco[20][abs(self.reco[20]) < 120])) 
+            self.pxplus = self.reco[:,15]
+            self.pyplus = self.reco[:,16]
+            self.pzplus = self.reco[:,17]
+            self.pxminus = self.reco[:,18]
+            self.pyminus = self.reco[:,19]
+            self.pzminus = self.reco[:,20]
 
             self.vtx = self.reco[:,21][self.reco[:,21]<1e6]
             self.vty = self.reco[:,22][self.reco[:,22]<1e6]
@@ -98,7 +110,8 @@ class DataOrganizer:
         return self.elementid, self.detectorid, self.selectedEvents, self.sid, self.hits, self.EventID, self.target_track
     def grab_mom(self):
         return self.mom
-    
+    def grab_meta(self):
+        return self.sid, self.rid,     
 
 # #Testing
 # t0 = time.time()
