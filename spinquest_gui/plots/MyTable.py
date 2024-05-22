@@ -12,22 +12,46 @@ from spinquest_gui.modules.calculations.DataReader import DataReader
 from spinquest_gui.modules.directories.directory_health import get_reconstructed_directory
 
 class MyTable(QTableWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, rows, columns):
+        super().__init__(rows, columns)
         self.setGeometry(0, 0, 400, 300)
 
         # Insert data into the table
 
-    def setData(self):
-        print("=======MOM=======")
-        print(mom)
+    def setData(self,fileNumber):
+
+        # Direct Data
+        filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"MetaDATA")
+        self.data_reader.current_index = fileNumber
+        self.plot_data = self.data_reader.read_data()
+
+        # Momentum
+        filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"MOMENTUM")
+        self.data_reader.current_index = fileNumber
+        self.plot_data = self.data_reader.read_data()
+        meanPX = np.mean(self.plot_data[0])
+        meanPY = np.mean(self.plot_data[1])
+        meanPZ = np.mean(self.plot_data[2])
+        totalHits = self.plot_data[3]
+
+        del(self.plot_data)
+
+        filenames = sorted([filename for filename in os.listdir(get_reconstructed_directory()) if filename.endswith(".npz")])
+        self.data_reader = DataReader([os.path.join(get_reconstructed_directory(), filename) for filename in filenames],"MetaDATA")
+        self.data_reader.current_index = fileNumber
+        self.plot_data = self.data_reader.read_data()
+        RunID = self.plot_data[0][0]
+        SpillID = self.plot_data[1][0]
+
         data = [
-            ("Run ID", rid),
-            ("Spill ID",  sid),
-            #("Total Hits",  totalHits),
-            # ("PX",round(meanPX,4)),
-            # ("PY",round(meanPY,4)),
-            # ("PZ",round(meanPZ,4))
+            ("Run ID", RunID),
+            ("Spill ID",  SpillID),
+            ("Total Hits",  totalHits),
+            ("PX",round(meanPX,4)),
+            ("PY",round(meanPY,4)),
+            ("PZ",round(meanPZ,4))
 
             
         ]
