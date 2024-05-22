@@ -6,10 +6,9 @@ import os
 # External Packages | NumPy
 import numpy as np
 
+# Modules | Directories
 from spinquest_gui.modules.calculations.QTracker import QTracker
-
-from spinquest_gui.modules.directories.directory_health import get_raw_directory
-
+from spinquest_gui.modules.directories.directory_health import get_raw_contents, get_reconstructed_directory
 class DataOrganizer:
     
     def __init__(self):
@@ -21,16 +20,20 @@ class DataOrganizer:
         self.detectorid = None
         self.elementid = None
         
+        
+        
     def organizeData(self):
         #finds the raw file
-        raw_files = [os.path.join(get_raw_directory(), f) for f in os.listdir(get_raw_directory()) if os.path.isfile(os.path.join(get_raw_directory(), f))]
-        #raw_files = [os.path.join(get_raw_directory(), f) for f in os.listdir(get_raw_directory()) if f.endswith(".root")]
-        #sort by order of time mod
-        raw_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-        self.fileCount = len(raw_files)
 
-        print(f"files are {get_raw_directory()}")
-        most_recent_raw_file = raw_files[1]
+        raw_files = get_raw_contents()
+
+        # Get the most recent file path
+        if raw_files:
+            most_recent_raw_file = raw_files[0]
+            #print("Most recent file:", most_recent_raw_file)
+        else:
+            most_recent_raw_file = None
+            #print("The directory is empty")
 
 
         #Do the same for the TSV file here
@@ -43,11 +46,11 @@ class DataOrganizer:
             self.reco, self.hits, self.target_track = QTracker.tracker(predictions, filt, self.hits, drift,self.metadata, root_file)
 
             self.sid = self.reco[:,34]
-            self.eid = self.reco[:,33]
+            self.rid = self.reco[:,32]
+            self.EventID = self.reco[:,33]
             targetTrackProbabilty = self.reco[:,31]
             dumpTrackProbabilty = self.reco[:,30]
 
-#<<<<<<< Updated upstream:spinquest_gui/modules/calculations/DataOrganizer.py
             #self.mom = self.reco[15:21][abs(self.reco[15:21]) < 120]
         
             sub_array = self.reco[15:21]
@@ -73,63 +76,53 @@ class DataOrganizer:
             # self.px = np.concatenate((self.reco[15][abs(self.reco[15]) < 120],self.reco[18][abs(self.reco[18]) < 120]))
             # self.py = np.concatenate((self.reco[16][abs(self.reco[16]) < 120],self.reco[19][abs(self.reco[19]) < 120]))
             # self.pz = np.concatenate((self.reco[17][abs(self.reco[17]) < 120],self.reco[20][abs(self.reco[20]) < 120])) 
-#=======
-            self.pxplus = self.reco[:,15]
-            self.pyplus = self.reco[:,16]
-            self.pzplus = self.reco[:,17]
-            self.pxminus = self.reco[:,18]
-            self.pyminus = self.reco[:,19]
-            self.pzminus = self.reco[:,20]
-#>>>>>>> Stashed changes:DataOrganizer.py
 
-            self.vtx = self.reco[:,21]
-            self.vty = self.reco[:,22]
-            self.vtz = self.reco[:,23]
+            self.vtx = self.reco[:,21][self.reco[:,21]<1e6]
+            self.vty = self.reco[:,22][self.reco[:,22]<1e6]
+            self.vtz = self.reco[:,23][self.reco[:,23]<1e6]
 
             probabilityTargetDimu = targetTrackProbabilty>=.9
             probabilityDumpDimu = dumpTrackProbabilty<=.001
             targetDimuIndex =   np.where(probabilityTargetDimu & probabilityDumpDimu)
-            self.selectedEvents = self.eid[targetDimuIndex]
+            self.selectedEvents = self.EventID[targetDimuIndex]
 
             #clean memory?
 
-            #return self.sid, self.EventID, self.selectedEvents, self.pxplus, self.pyplus, self.pzplus, self.pxminus, self.pyminus, self.pzminus, self.vtx, self.vty, self.vtz, self.hits, self.target_track, self.elementid, self.detectorid
+            #return sid, EventID,selectedEvents, px, py, pz, vtx, vty, vtz, self.hits, self.target_track, self.elementid, self.detectorid
 
             
 
             
         else:
             print("No events meeting dimuon criteria.")  # If no events pass the filter, notify the user.
-#<<<<<<< Updated upstream:spinquest_gui/modules/calculations/DataOrganizer.py
         
 
     def grab_Vertex(self):
-        return self.vtx, self.vty, self.vtz, self.sid, self.eid
+        return self.vtx, self.vty, self.vtz, self.sid, self.EventID
     
     def grab_HitInfo(self):
-        return self.elementid, self.detectorid, self.selectedEvents, self.sid, self.hits, self.eid, self.target_track
+        return self.elementid, self.detectorid, self.selectedEvents, self.sid, self.hits, self.EventID, self.target_track
     def grab_mom(self):
         return self.mom
-#=======
-#>>>>>>> Stashed changes:DataOrganizer.py
-    
+    def grab_meta(self):
+        return self.sid, self.rid,     
 
 # #Testing
-#t0 = time.time()
+# t0 = time.time()
 #  #Create an instance of dataOrganizer
-#organizer = dataOrganizer()
+# organizer = dataOrganizer()
 
 # # Call the organizeData() method to populate the necessary attributes
-#organizer.organizeData()
+# organizer.organizeData()
 
 # # Call the organizeData() method on the instance
 
+# vtx, vty, vtz, sid, eventID = organizer.grab_Vertex()
 # print(sid)
-#print(organizer.sid)
-#t1 = time.time()
+# t1 = time.time()
 
-#total = t1 - t0
-#print(total)
+# total = t1 - t0
+# print(total)
 
 
 

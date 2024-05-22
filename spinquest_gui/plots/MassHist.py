@@ -1,4 +1,4 @@
-p# Native Package | os
+# Native Package | os
 import os
 
 # External Packages | NumPy
