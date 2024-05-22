@@ -15,7 +15,8 @@ from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 # from spinquest_gui.plots.MassHist import MassHist
 
 from spinquest_gui.tabs.tab1 import Tab1
-#from spinquest_gui.tabs.tab2 import Tab2
+from spinquest_gui.tabs.tab2 import Tab2
+
 from spinquest_gui.modules.calculations.DataOrganizer import DataOrganizer
 
 from spinquest_gui.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
@@ -25,6 +26,7 @@ from spinquest_gui.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_
 # PyQT Window | Main Window
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QLabel
+from PyQt5.QtCore import QTimer
 
 class App(QMainWindow):
 
@@ -60,28 +62,37 @@ class App(QMainWindow):
         tab_widget = QTabWidget()
 
         #  #Create an instance of dataOrganizer
-        organizer = DataOrganizer()
+        self.organizer = DataOrganizer()
 
 
         
         tab1_instance = Tab1()
-        tab1_instance.tab(organizer)
+        tab1_instance.tab(self.organizer)
         #tab2 = Tab2()
-        # tab2 = MassHist()
+        self.tab2_instance = Tab2(self.organizer)
 
         #self.central_widget.addTab(tab1, "Main Display")
         tab_widget.addTab(tab1_instance,"Main Display")
+        tab_widget.addTab(self.tab2_instance, "Mass Histogram")
         self.setCentralWidget(tab_widget)
        # self.central_widget.addTab(tab2, "Strip Charts")
         # self.central_widget.addTab(tab2,"Mass Histogram")
         
        # tabs.addTab(tab3, "Spill")
 
+    def refresh_tabs(self):
+        self.tab2_instance.refresh_modules(self.organizer)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = App()
     window.show()
+
+    
+    timer = QTimer()
+    timer.timeout.connect(lambda : window.refresh_tabs())
+    timer.start(30000)
 
     # window2 = StripChartWindow()
     # window2.show()

@@ -30,7 +30,7 @@ class OrgMassHist(QWidget):
         #self.searchButton.clicked.connect(self.findSpill)
         #self.returnButton = QPushButton('Return to most recent spill')
         #self.returnButton.clicked.connect(self.leaveSpill) 
-        self.hist.setLabel('bottom','Mass bins (MeV)')
+        self.hist.setLabel('bottom','Mass bins (1 MeV)')
         self.hist.setLabel('left','Occurences in spill')
         #layout.addWidget(self.txt)
         #layout.addWidget(self.searchButton)
@@ -59,13 +59,13 @@ class OrgMassHist(QWidget):
                 if (self.barItemExists):
                     self.hist.removeItem(self.bar)
                 self.momData = np.array([organizer.pxplus,organizer.pyplus,organizer.pzplus,organizer.pxminus,organizer.pyminus,organizer.pzminus])
-                self.eidData = organizer.eid
+                self.eidData = organizer.EventID
                 moms = np.zeros((len(self.eidData),6))
                 mass = np.zeros((len(self.eidData)))
                 for i in range (len(moms)):
                     moms[i] = np.array([self.momData[0][i],self.momData[1][i],self.momData[2][i],self.momData[3][i],self.momData[4][i],self.momData[5][i]])
                     mass[i] = calcVariables(moms[i])[0]
-                bins = np.arange(min(mass)-5,max(mass)+5,(max(mass)-min(mass)+10)/100)
+                bins = np.arange(min(mass)-5,max(mass)+5, 1)
                 massOccs = np.zeros(len(bins))
                 leftEdges = bins[:-1]
                 rightEdges = bins[1:]
