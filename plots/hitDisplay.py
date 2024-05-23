@@ -18,22 +18,21 @@ class HitDisplay:
         
         
 
-    def getOcc(self,hits,selectedEvents, eventID,ith_event):
-        eventIndex = np.where(selectedEvents[ith_event] == eventID)[0]
-        Hodo = np.zeros(16)
+    def getOcc(self,hits,event):
 
-        DC = np.zeros(30)
+        Hodo = np.zeros(15)
+
+        DC = np.zeros(24)
 
         propTube = np.zeros(7)
 
-        hitmatrix = np.vstack((np.where(hits[eventIndex]==True)[1],np.where(hits[eventIndex]==True)[2])).T
-        #shift detector from 0 to 1
-        hitmatrix[:,0] = hitmatrix[:,0]+1
 
-        for i in range(1,7):
+
+        hitmatrix = np.vstack((np.where(hits[event]==True)[0],np.where(hits[event]==True)[1])).T
+
+        for i in range(0,7):
             index = hitmatrix[hitmatrix[:,0] == i]
             DC[i] = len(index)
-
 
         for i in range(12,17):
             index = hitmatrix[hitmatrix[:,0] == i]
@@ -58,7 +57,7 @@ class HitDisplay:
 
         
         
-        return(DC, Hodo, propTube)
+        return(hitmatrix, DC, Hodo, propTube)
 
 
         
@@ -68,14 +67,13 @@ class HitDisplay:
     
 
 
-    def Raw_Hit(self, elementid, detectorid, selectedEvents, sid, eventID,ith_event):
-        eventIndex = np.where(selectedEvents[ith_event] == eventID)[0]
- 
+    def Raw_Hit(self, elementid, detectorid, selectedEvents, sid, eventID):
+        eventIndex = np.where(selectedEvents[0] == eventID)[0]
         # Create a scatter plot item
         scatter = pg.ScatterPlotItem(detectorid[eventIndex][0],elementid[eventIndex][0], pen=pg.mkPen(None), symbol='o', size=10, brush=pg.mkBrush(128, 128, 128, 50))
         return scatter
-    def Cluster_Hit(self,hits, selectedEvents, sid, eventID,ith_event):
-        eventIndex = np.where(selectedEvents[ith_event] == eventID)[0]
+    def Cluster_Hit(self,hits, selectedEvents, sid, eventID):
+        eventIndex = np.where(selectedEvents[0] == eventID)[0]
         cluster = np.vstack((np.where(hits[eventIndex]==True)[1],np.where(hits[eventIndex]==True)[2])).T
         #shift detector from 0 to 1
         cluster[:,0] = cluster[:,0]+1
@@ -85,10 +83,9 @@ class HitDisplay:
         # # Create a scatter plot item
         scatter = pg.ScatterPlotItem(cluster[:,0],cluster[:,1], pen=pg.mkPen(None), symbol='o', size=10, brush=pg.mkBrush(255, 255, 255, 80))
         return scatter
-    def Track_Hits(self,selectedEvents,sid,eventID,track, ith_event):
-
-        elementid_mup = track[ith_event][:34,0]
-        elementid_mum = track[ith_event][34:,0]
+    def Track_Hits(self,selectedEvents,sid,eventID,track):
+        elementid_mup = track[0][:34,0]
+        elementid_mum = track[0][34:,0]
         st1 = np.arange(1,7)
         st2 = np.arange(13,19)
         st3m = np.arange(19,25)

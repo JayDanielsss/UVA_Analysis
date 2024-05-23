@@ -1,6 +1,5 @@
 # Native Package | os
 import os
-import glob
 
 from spinquest_gui.statics.constants import _DIRECTORY_DATA, _DIRECTORY_DATA_RAW, _DIRECTORY_DATA_RECONSTRUCTED, _SPINQUEST_GUI
 
@@ -56,28 +55,18 @@ def get_reconstructed_directory():
 
     return current_dir
 
-def get_raw_contents():
+def get_reconstructed_contents():
    
-    # Construct the path to the 'raw' directory
-    raw_dir = get_raw_directory()
+    # Construct the path to the 'reconstructed' directory
+    reconstructed_dir = get_reconstructed_directory()
 
     try:
-         #finds the raw file
-        # List all files in the directory
-        contents = glob.glob(os.path.join(raw_dir, '*'))
 
-        # Sort files by modification time, most recent first
-        contents.sort(key=os.path.getmtime, reverse=True)
-
-
-        # contents = os.listdir(raw_dir)
-        # contents.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-
+        contents = os.listdir(reconstructed_dir)
 
     except FileNotFoundError:
 
         contents = []
-        print(f"The directory {raw_dir} does not exist.")
+        print(f"The directory {reconstructed_dir} does not exist.")
     
     return contents
-
