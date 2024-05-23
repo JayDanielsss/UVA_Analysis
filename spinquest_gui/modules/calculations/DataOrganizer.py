@@ -27,8 +27,6 @@ class DataOrganizer:
 
         raw_files = get_raw_contents()
 
-        self.fileCount = len(raw_files)
-
         # Get the most recent file path
         if raw_files:
             most_recent_raw_file = raw_files[0]
@@ -67,12 +65,9 @@ class DataOrganizer:
             # py_mum = self.reco[19][abs(self.reco[19]) < 120]
             # pz_mum = self.reco[20][abs(self.reco[20]) < 120]
 
-            self.pxplus = self.reco[:,15]
-            self.pyplus = self.reco[:,16]
-            self.pzplus = self.reco[:,17]
-            self.pxminus = self.reco[:,18]
-            self.pyminus = self.reco[:,19]
-            self.pzminus = self.reco [:,20]
+            # self.px = np.column_stack((px_mup,px_mum))
+            # self.py = np.column_stack((py_mup,py_mum))
+            # self.pz = np.column_stack((pz_mup,pz_mum))
             
             
             
