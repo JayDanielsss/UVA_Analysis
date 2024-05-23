@@ -12,60 +12,77 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QAppli
 import pyqtgraph as pg
 
 from spinquest_gui.modules.calculations.DataReader import DataReader
-from spinquest_gui.modules.calculations.DataOrganizer import DataOrganizer
 
 # Physics
 
 ### Lorentz Dot Product
 from spinquest_gui.modules.physics.calculate_physics import lorentz_dot_product
 
-class OrgMassHist(QWidget):
-    def __init__(self, organizer : DataOrganizer):
+class MassHist(QWidget):
+    def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
         self.hist = pg.plot()
-        #self.txt = QLineEdit(self)
-        #self.txt.setText('Enter desired spill ID')
-        #self.searchButton = QPushButton('View chosen spill')
-        #self.searchButton.clicked.connect(self.findSpill)
-        #self.returnButton = QPushButton('Return to most recent spill')
-        #self.returnButton.clicked.connect(self.leaveSpill) 
-        self.hist.setLabel('bottom','Mass bins (1 MeV)')
+        self.txt = QLineEdit(self)
+        self.txt.setText('Enter desired spill ID')
+        self.searchButton = QPushButton('View chosen spill')
+        self.searchButton.clicked.connect(self.findSpill)
+        self.returnButton = QPushButton('Return to most recent spill')
+        self.returnButton.clicked.connect(self.leaveSpill) 
+        self.hist.setLabel('bottom','Mass bins (MeV)')
         self.hist.setLabel('left','Occurences in spill')
-        #layout.addWidget(self.txt)
-        #layout.addWidget(self.searchButton)
-        #layout.addWidget(self.returnButton)
+        layout.addWidget(self.txt)
+        layout.addWidget(self.searchButton)
+        layout.addWidget(self.returnButton)
         layout.addWidget(self.hist)
         self.setLayout(layout)
 
+        if not (os.path.exists("MassData")):
+            path = os.path.join("MassData")
+            os.mkdir(path)
+            with open("MassData/README.txt",'w') as README:
+                README.write("This directory contains .npz files labeled by spill. Each file contains 2 arrays\n")
+                README.write("arr_0 is the array containing event IDs and arr_1 is the array containing masses\n")
+                README.write("The event ID stored in the nth index of arr_0 corresponds to the mass data stored in the nth index of arr_1\n")
 
+        self.reader = None
 
         self.currentFile = 0
-        self.fileCount = organizer.fileCount
 
         self.barItemExists = False
         self.viewingOldSpill = False
 
+        self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.fileCount = len(self.filenames)
+        self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "MOMENTUM")
+
         if (self.fileCount > 0):
             self.currentFile = self.fileCount-1
-            self.drawHist(organizer)
+            self.drawHist()
 
-   
+
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(self.drawHist)
+        timer.start(500)    
     
-    def drawHist(self,organizer : DataOrganizer):
+    def drawHist(self):
         if not (self.viewingOldSpill):
-            self.fileCount = organizer.fileCount
+            self.filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+            self.fileCount = len(self.filenames)
             if (self.currentFile < self.fileCount):
                 if (self.barItemExists):
                     self.hist.removeItem(self.bar)
-                self.momData = np.array([organizer.pxplus,organizer.pyplus,organizer.pzplus,organizer.pxminus,organizer.pyminus,organizer.pzminus])
-                self.eidData = organizer.EventID
+                self.reader = DataReader([os.path.join("reconstructed", filename) for filename in self.filenames], "MOMENTUM")
+                self.reader.current_index = self.currentFile
+                self.momData = self.reader.read_data()
+                self.reader.grab = "EVENT"
+                self.eidData = self.reader.read_data()
                 moms = np.zeros((len(self.eidData),6))
                 mass = np.zeros((len(self.eidData)))
                 for i in range (len(moms)):
                     moms[i] = np.array([self.momData[0][i],self.momData[1][i],self.momData[2][i],self.momData[3][i],self.momData[4][i],self.momData[5][i]])
                     mass[i] = calcVariables(moms[i])[0]
-                bins = np.arange(min(mass)-5,max(mass)+5,1)
+                bins = np.arange(min(mass)-5,max(mass)+5,(max(mass)-min(mass)+10)/100)
                 massOccs = np.zeros(len(bins))
                 leftEdges = bins[:-1]
                 rightEdges = bins[1:]
@@ -73,42 +90,46 @@ class OrgMassHist(QWidget):
                     for j in range(len(mass)):
                         if (mass[j] > leftEdges[i] and mass[j] <= rightEdges[i]):
                             massOccs[i] += 1
-                self.bar = pg.BarGraphItem(x = bins, width = 1,height=massOccs,brush = pg.mkBrush("#ffb3cc"))
+                self.bar = pg.BarGraphItem(x0=leftEdges,x1=rightEdges,height=massOccs,brush = pg.mkBrush("#ffb3cc"))
                 self.hist.addItem(self.bar)
                 self.barItemExists = True
                 self.currentFile+=1
+                self.reader.grab = "SPILL"
+                self.sidData = self.reader.read_data()[0]
+                spillString = str(self.sidData)
+                np.savez('MassData/' + spillString + '.npz',self.eidData,mass)
                 layout = self.layout()
     
-    # def findSpill(self):
-    #     spillString = self.txt.text()
-    #     if (spillString.isdigit()):
-    #         spill = int(spillString)
-    #         self.currentFile = 0
-    #         filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
-    #         self.fileCount = len(filenames)
-    #         self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"SPILL")
-    #         for i in range (self.fileCount):
-    #             self.data_reader.current_index = self.currentFile
-    #             sidData = self.data_reader.read_data()[0]
-    #             if (spill == sidData):
-    #                 self.viewingOldSpill = False
-    #                 self.drawHist()
-    #                 self.viewingOldSpill = True
-    #                 break
-    #             elif (self.currentFile < self.fileCount-1):
-    #                 self.currentFile += 1
-    #             else:
-    #                 print("Spill not found!\n")
+    def findSpill(self):
+        spillString = self.txt.text()
+        if (spillString.isdigit()):
+            spill = int(spillString)
+            self.currentFile = 0
+            filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+            self.fileCount = len(filenames)
+            self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"SPILL")
+            for i in range (self.fileCount):
+                self.data_reader.current_index = self.currentFile
+                sidData = self.data_reader.read_data()[0]
+                if (spill == sidData):
+                    self.viewingOldSpill = False
+                    self.drawHist()
+                    self.viewingOldSpill = True
+                    break
+                elif (self.currentFile < self.fileCount-1):
+                    self.currentFile += 1
+                else:
+                    print("Spill not found!\n")
 
-    # def leaveSpill(self):
-    #     self.viewingOldSpill = False
-    #     filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
-    #     self.fileCount = len(filenames)
-    #     self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"SPILL")
-    #     if (self.fileCount > 0):
-    #         self.currentFile = self.fileCount-1
-    #     self.drawHist()
-    #     self.txt.clear()
+    def leaveSpill(self):
+        self.viewingOldSpill = False
+        filenames = sorted([filename for filename in os.listdir("reconstructed") if filename.endswith(".npz")])
+        self.fileCount = len(filenames)
+        self.data_reader = DataReader([os.path.join("reconstructed", filename) for filename in filenames],"SPILL")
+        if (self.fileCount > 0):
+            self.currentFile = self.fileCount-1
+        self.drawHist()
+        self.txt.clear()
     
 def boost(vector, boost_v):
     bx, by, bz = boost_v[0], boost_v[1], boost_v[2]

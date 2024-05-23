@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt, QTimer
 import pyqtgraph as pg
 
 # Something | DataReader
-from spinquest_gui.modules.calculations.DataReader import DataReader
+from spinquest_gui.modules.calculations.DataOrganizer import DataOrganizer
 
 # Something | HitDisplay
 from spinquest_gui.plots.hitDisplay import HitDisplay
@@ -27,10 +27,11 @@ from spinquest_gui.modules.directories.directory_health import get_reconstructed
 
 class Tab1(QWidget):
 
-    def __init__(self):
+    def __init__(self, organizer : DataOrganizer):
 
         super().__init__()
         self.initUI()
+        self.draw_hitmatrix(organizer)
 
     def initUI(self):
         layout = QVBoxLayout(self)  # Initialize the layout with the widget as parent
@@ -60,6 +61,8 @@ class Tab1(QWidget):
 
         # # Enable antialiasing for prettier plots
         pg.setConfigOptions(antialias=True)
+
+        # draw the initial hit matrix
 
         # self.momentumPlot = StaticHistogram(self.plot_data)
         # layout.addWidget(self.momentumPlot)
@@ -91,11 +94,11 @@ class Tab1(QWidget):
     #     self.draw_hitmatrix()
        
 
-    def draw_hitmatrix(self):
+    def draw_hitmatrix(self, organizer : DataOrganizer):
 
 
         ith_event = 0
-        elementid, detectorid, selectedEvents, sid, hits, eventID, track= self.organizer.grab_HitInfo()
+        elementid, detectorid, selectedEvents, sid, hits, eventID, track= organizer.grab_HitInfo()
         hitmatrices = HitDisplay()
         scatter_raw = hitmatrices.Raw_Hit(elementid,detectorid, selectedEvents, sid, eventID, ith_event)
         scatter_cluster = hitmatrices.Cluster_Hit(hits,selectedEvents,sid,eventID, ith_event)
@@ -150,12 +153,15 @@ class Tab1(QWidget):
         
 
         
-    def tab(self,organizer):
+    #def tab(self,organizer):
         # Call the organizeData() method to populate the necessary attributes
-        self.organizer = organizer
-        self.organizer.organizeData()
-        self.draw_hitmatrix()
+     #   self.organizer = organizer
+      #  self.organizer.organizeData()
+       # self.draw_hitmatrix()
        # self.readout_table()
+
+    def refresh_modules(self, organizer : DataOrganizer):
+        self.draw_hitmatrix(organizer)
 
 
 
