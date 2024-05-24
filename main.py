@@ -3,9 +3,6 @@
 ###  J, S, M, D   ###
 #####################
 
-# Native Package | os
-import os
-
 # Native Package | sys
 import sys
 
@@ -14,17 +11,16 @@ from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 
 # from spinquest_gui.plots.MassHist import MassHist
 
-from spinquest_gui.tabs.tab1 import Tab1
-#from spinquest_gui.tabs.tab2 import Tab2
-from spinquest_gui.modules.calculations.DataOrganizer import DataOrganizer
+from app.tabs.tab1 import Tab1
 
-from spinquest_gui.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
+from app.modules.DataOrganizer import DataOrganizer
+
+from app.statics.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
 
 # from spinquest_gui.plots.StripChartsWindow import StripChartWindow
 
 # PyQT Window | Main Window
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget
 
 class App(QMainWindow):
 
@@ -56,29 +52,18 @@ class App(QMainWindow):
         # Initialize the central widget's tabs:
         # self.tab1 = Tab1()
 
-
         tab_widget = QTabWidget()
 
         #  #Create an instance of dataOrganizer
         organizer = DataOrganizer()
 
-
-        
         tab1_instance = Tab1()
         tab1_instance.tab(organizer)
         #tab2 = Tab2()
-
-       # self.tab2_instance = Tab2(self.organizer)
-
-        #self.central_widget.addTab(tab1, "Main Display")
-        tab_widget.addTab(tab1_instance,"Main Display")
-        #tab_widget.addTab(self.tab2_instance, "Mass Histogram")
-
         # tab2 = MassHist()
 
         #self.central_widget.addTab(tab1, "Main Display")
         tab_widget.addTab(tab1_instance,"Main Display")
-
         self.setCentralWidget(tab_widget)
        # self.central_widget.addTab(tab2, "Strip Charts")
         # self.central_widget.addTab(tab2,"Mass Histogram")
