@@ -147,7 +147,7 @@ class DataOrganizer:
         """
         # Description:
         Once organizeData() has been run, we use
-        this modular function to obtain vertex information.
+        this modular function to obtain hit information.
 
         # Parmeters:
         
@@ -171,7 +171,7 @@ class DataOrganizer:
         """
         # Description:
         Once organizeData() has been run, we use
-        this modular function to obtain vertex information.
+        this modular function to obtain momentum information.
 
         # Parmeters:
         
@@ -203,7 +203,7 @@ class DataOrganizer:
 
         """
     
-        return self.sid, self.ridOn
+        return self.sid, self.rid
 
 
 
