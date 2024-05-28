@@ -24,8 +24,7 @@ import tensorflow as tf
 
 
 class QTracker:
-    def __init__(self, root_file):
-
+    def __init__(self, root_file, dir):
         print("QTracker Running")
         return None
     
@@ -204,8 +203,8 @@ class QTracker:
 
     
     # Process each event to fill the hits, drift, and TDC arrays with cleaned and structured data.
-    def prediction(root_file):
-        root_file = root_file
+    def prediction(root_file,dir):
+
         targettree = uproot.open(root_file + ":save")
         detectorid = targettree["fAllHits.detectorID"].arrays(library="np")["fAllHits.detectorID"]
         elementid = targettree["fAllHits.elementID"].arrays(library="np")["fAllHits.elementID"]
@@ -228,7 +227,7 @@ class QTracker:
         print("Loaded events")
 
         # Load and apply a pre-trained TensorFlow model for event filtering.
-        model = tf.keras.models.load_model('app/data/networks/event_filter')
+        model = tf.keras.models.load_model(os.path.join(dir, 'data/networks/event_filter'))
         probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
         predictions = probability_model.predict(hits, batch_size=256, verbose=0)
         # Filter out events based on the prediction from the event filter model.
@@ -254,7 +253,7 @@ class QTracker:
 
         return predictions, filt, hits, drift,metadata, root_file, detectorid, elementid
 
-    def tracker(predictions, filt, hits, drift,metadata, root_file):
+    def tracker(predictions, filt, hits, drift,metadata, root_file,dir):
 
         # Define normalization constants for kinematic and vertex data.
         kin_means = np.array([2, 0, 35, -2, 0, 35])
@@ -291,7 +290,7 @@ class QTracker:
         tf.compat.v1.reset_default_graph()
         
         # Load the Track Finder model trained to identify tracks across all vertex positions.
-        model = tf.keras.models.load_model('app/data/networks/Track_Finder_All')
+        model = tf.keras.models.load_model(os.path.join(dir, 'data/networks/Track_Finder_All'))
         predictions = (np.round(model.predict(hits, verbose=0) * max_ele)).astype(int)
         
         # Evaluate the Track Finder model and adjust the hit matrices accordingly.
@@ -311,7 +310,7 @@ class QTracker:
         tf.compat.v1.reset_default_graph()
         
         # Load the momentum reconstruction model and predict the 4-momentum for each track.
-        model = tf.keras.models.load_model('app/data/networks/Reconstruction_All')
+        model = tf.keras.models.load_model(os.path.join(dir, 'data/networks/Reconstruction_All'))
         pred = model.predict(all_vtx_track, batch_size=8192, verbose=0)
         reco_kinematics = pred  # Store the predicted 4-momentum for each event.
 
@@ -324,7 +323,7 @@ class QTracker:
         # Clear TensorFlow sessions and load the vertex reconstruction model.
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model = tf.keras.models.load_model('app/data/networks/Vertexing_All')
+        model = tf.keras.models.load_model(os.path.join(dir, 'data/networks/Vertexing_All'))
         
         # Predict vertex positions for each event.
         pred = model.predict(vertex_reco, batch_size=8192, verbose=0)
@@ -337,7 +336,7 @@ class QTracker:
     
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model = tf.keras.models.load_model('app/data/networks/Track_Finder_Z')
+        model = tf.keras.models.load_model(os.path.join(dir, 'data/networks/Track_Finder_Z'))
         predictions = (np.round(model.predict(hits,verbose=0)*max_ele)).astype(int)
         z_vtx_track = QTracker.evaluate_finder(hits,drift,predictions)
 
@@ -351,7 +350,7 @@ class QTracker:
 
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model=tf.keras.models.load_model('app/data/networks/Reconstruction_Z')
+        model=tf.keras.models.load_model(os.path.join(dir, 'data/networks/Reconstruction_Z'))
         pred = model.predict(z_vtx_track,batch_size=8192,verbose=0)
         reco_kinematics = pred
 
@@ -359,7 +358,7 @@ class QTracker:
 
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model=tf.keras.models.load_model('app/data/networks/Vertexing_Z')
+        model=tf.keras.models.load_model(os.path.join(dir, 'data/networks/Vertexing_Z'))
         pred = model.predict(vertex_reco,batch_size=8192,verbose=0)
         reco_vertex = pred
 
@@ -369,13 +368,13 @@ class QTracker:
     
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model = tf.keras.models.load_model('app/data/networks/Track_Finder_Target')
+        model = tf.keras.models.load_model(os.path.join(dir, 'data/networks/Track_Finder_Target'))
         predictions = (np.round(model.predict(hits,verbose=0)*max_ele)).astype(int)
         target_track = QTracker.evaluate_finder(hits,drift,predictions)
 
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model=tf.keras.models.load_model('app/data/networks/Reconstruction_Target')
+        model=tf.keras.models.load_model(os.path.join(dir, 'data/networks/Reconstruction_Target'))
         pred = model.predict(target_track,batch_size=8192,verbose=0)
         reco_kinematics = pred
 
@@ -385,7 +384,7 @@ class QTracker:
 
         tf.keras.backend.clear_session()
         tf.compat.v1.reset_default_graph()
-        model=tf.keras.models.load_model('app/data/networks/target_dump_filter')
+        model=tf.keras.models.load_model(os.path.join(dir, 'data/networks/target_dump_filter'))
         target_dump_prob = model.predict(reco_kinematics,batch_size=8192,verbose=0)
         tracks = np.concatenate((all_vtx_track, z_vtx_track, target_track),axis=2)
         all_predictions = np.column_stack((all_vtx_reco_kinematics*stds+means,z_vtx_reco_kinematics*stds+means, target_vtx_reco_kinematics*kin_stds+kin_means))            

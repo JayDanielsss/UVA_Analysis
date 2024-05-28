@@ -22,6 +22,14 @@ class DataOrganizer:
         self.metadata = None
         self.detectorid = None
         self.elementid = None
+
+        # Get the directory of the current file
+        self.current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Get the parent directory of the current directory
+        self.parent_dir = os.path.dirname(self.current_dir)
+
+        
         
     def get_raw_contents(self):
         """
@@ -84,11 +92,11 @@ class DataOrganizer:
         #Do the same for the TSV file here
 
         #Pull information from QTracker
-        predictions, filt, self.hits, drift,self.metadata, root_file, self.detectorid, self.elementid = QTracker.prediction(most_recent_raw_file)
+        predictions, filt, self.hits, drift,self.metadata, root_file, self.detectorid, self.elementid = QTracker.prediction(most_recent_raw_file,self.parent_dir)
         
         #Filter hits and tracks write output
         if(len(self.hits) > 0):
-            self.reco, self.hits, self.target_track = QTracker.tracker(predictions, filt, self.hits, drift,self.metadata, root_file)
+            self.reco, self.hits, self.target_track = QTracker.tracker(predictions, filt, self.hits, drift,self.metadata, root_file,self.parent_dir)
 
             self.sid = self.reco[:,34]
             self.rid = self.reco[:,32]
