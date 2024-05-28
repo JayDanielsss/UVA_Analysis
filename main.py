@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 
 from app.tabs.tab1 import Tab1
 
-from app.modules.DataOrganizer import DataOrganizer
+
 
 from app.modules.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
 
@@ -56,11 +56,9 @@ class App(QMainWindow):
 
         tab_widget = QTabWidget()
 
-        #  #Create an instance of dataOrganizer
-        organizer = DataOrganizer()
 
         tab1_instance = Tab1()
-        tab1_instance.tab(organizer)
+        
         #tab2 = Tab2()
         # tab2 = MassHist()
 

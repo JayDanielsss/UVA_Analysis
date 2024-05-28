@@ -8,6 +8,7 @@ import pyqtgraph as pg
 
 # Modules | HitDisplay
 from app.modules.HitDisplay import HitDisplay
+from app.modules.DataOrganizer import DataOrganizer
 
 # Modules | MyTable
 # from app.modules.MyTable import MyTable
@@ -31,6 +32,15 @@ class Tab1(QWidget):
         # # Enable antialiasing for prettier plots
         pg.setConfigOptions(antialias = True)
 
+        
+        #Create an instance of dataOrganizer
+        self.organizer = DataOrganizer()
+        self.organizer.organizeData()
+        #call tab displays
+        self.tab()
+
+
+
     def draw_hitmatrix(self):
 
         ith_event = 0
@@ -39,7 +49,8 @@ class Tab1(QWidget):
         scatter_raw = hitmatrices.Raw_Hit(elementid,detectorid, selectedEvents, sid, eventID, ith_event)
         scatter_cluster = hitmatrices.Cluster_Hit(hits,selectedEvents,sid,eventID, ith_event)
         scatter_mup, scatter_mum = hitmatrices.Track_Hits(selectedEvents,sid,eventID,track, ith_event)
-        
+        #  #Create an instance of dataOrganizer
+        organizer = DataOrganizer()
         # Clear the plot widget before drawing new data
         self.plot_widget.clear()
         # Add the scatter plot items to the plot widget
@@ -74,9 +85,7 @@ class Tab1(QWidget):
         text = f"Occupancy\nAvg Hits per Event: {total_avg_per_spill:.0f}%\nTotal Hits per Spill: {total_occ_per_spill}\n"
         self.readout_label.setText(text)
 
-    def tab(self,organizer):
-        # Call the organizeData() method to populate the necessary attributes
-        self.organizer = organizer
-        self.organizer.organizeData()
+    def tab(self):
+        
         self.draw_hitmatrix()
        # self.readout_table()
