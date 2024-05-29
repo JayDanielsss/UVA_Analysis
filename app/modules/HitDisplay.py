@@ -8,7 +8,8 @@ class HitDisplay:
 
     def __init__(self):        
         
-        print("HitDisplay")
+        return None
+
 
     def getOcc(self, hits, selectedEvents, eventID, ith_event):
 
