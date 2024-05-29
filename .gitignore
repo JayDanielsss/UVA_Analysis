@@ -1,3 +1,4 @@
 data/networks/*
 data/raw/*
 data/reconstructed/*
+__pycache__
