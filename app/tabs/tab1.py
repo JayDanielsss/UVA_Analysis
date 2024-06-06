@@ -8,7 +8,9 @@ from PyQt5.QtCore import Qt, QTimer
 import pyqtgraph as pg
 
 # Modules | HitDisplay
+#from app.modules.HitDisplay import HitDisplay
 from app.modules.HitDisplay import HitDisplay
+
 from app.modules.DataOrganizer import DataOrganizer
 
 class Tab1(QWidget):
@@ -18,13 +20,19 @@ class Tab1(QWidget):
         self.initUI()
 
     def initUI(self):
-        layout = QVBoxLayout(self)  # Initialize the layout with the widget as parent
-        self.plot_widget = pg.PlotWidget()  # Create the plot widget
-        layout.addWidget(self.plot_widget)  # Add the plot widget to the layout
+        #layout = QVBoxLayout(self)  # Initialize the layout with the widget as parent
+        #self.plot_widget = pg.PlotWidget()  # Create the plot widget
+        #layout.addWidget(self.plot_widget)  # Add the plot widget to the layout
+
+                # Create the first tab with the PlotWidget
+        # Set up the layout for the widget
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+
 
         # Create QLabel for readout
         self.readout_label = QLabel(alignment=Qt.AlignLeft)
-        layout.addWidget(self.readout_label)
+        self.layout.addWidget(self.readout_label)
 
         # Enable antialiasing for prettier plots
         pg.setConfigOptions(antialias=True)
@@ -64,7 +72,7 @@ class Tab1(QWidget):
     def hit_display(self):
         '''creates the hit_display for the main window.'''
         elementid, detectorid, selectedEvents, sid, hits, eventID, track = self.organizer.grab_HitInfo()
-        self.hit_display_instance = HitDisplay(elementid, detectorid, selectedEvents, sid, hits, eventID, track, plot_widget=self.plot_widget)
+        self.hit_display_instance = HitDisplay(elementid, detectorid, selectedEvents, sid, hits, eventID, track, self.layout)
 
     def tab(self):
         '''Calls all displays for the tab.'''

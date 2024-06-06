@@ -5,10 +5,13 @@ import numpy as np
 import pyqtgraph as pg
 
 from PyQt5.QtCore import Qt, QTimer, QObject
+from PyQt5.QtWidgets import  QGridLayout
+
+
 
 class HitDisplay(QObject):  # Inherit from QObject
 
-    def __init__(self, elementid, detectorid, selectedEvents, sid, hits, eventID, track, plot_widget):
+    def __init__(self, elementid, detectorid, selectedEvents, sid, hits, eventID, track, layout):
         super().__init__()  # Call the constructor of QObject
         self.elementid = elementid
         self.detectorid = detectorid
@@ -16,41 +19,75 @@ class HitDisplay(QObject):  # Inherit from QObject
         self.sid = sid
         self.hits = hits
         self.eventID = eventID
-        self.track = track  
-        self.plot_widget = plot_widget  
+        self.track = track
+        #self.plot_widget = plot_widget
+        self.layout = layout
+        
+        self.ith_event = 0
+        # Create a grid layout for the scatter plots
+        grid_layout = pg.GraphicsLayoutWidget()
+        for i in range(3):
+            for j in range(3):
+                p = grid_layout.addPlot(row=i, col=j)
+                self.display(p)
+                self.ith_event += 1
+        
+        # Add the grid layout to the widget layout
+        self.layout.addWidget(grid_layout)
 
-        self.ith_event = 0 
-        #timer to cycle through events
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.display)  
-        self.timer.start(1000)  # Call hit_display every 1000 milliseconds (1 second)
-
-        if self.ith_event >= len(self.selectedEvents):
-            self.timer.stop()
-            return
-
-    def display(self):
-        #display pyqtgraph setup 
-        if self.ith_event >= len(self.selectedEvents):
-            self.timer.stop()
-            return
+    def display(self, plot_widget):
         scatter_raw = self.Raw_Hit()  
         scatter_cluster = self.Cluster_Hit()  
         scatter_mup, scatter_mum = self.Track_Hits()  
 
-        # Clear the plot widget before drawing new data
-        self.plot_widget.clear()
-        # Add the scatter plot items to the plot widget
-        self.plot_widget.addItem(scatter_raw)
-        self.plot_widget.addItem(scatter_cluster)                 
-        self.plot_widget.addItem(scatter_mup)
-        self.plot_widget.addItem(scatter_mum)
+        plot_widget.addItem(scatter_raw)
+        plot_widget.addItem(scatter_cluster)                 
+        plot_widget.addItem(scatter_mup)
+        plot_widget.addItem(scatter_mum)
 
+
+         #Define the dictionary for x-axis labels
+        x_labels = {
+            (0, 5): "ST0",
+            (12, 17): "ST2",
+            (18, 23): "ST3m",
+            (24, 29): "ST3P",
+            (30, 33): "H1",
+            (34, 37): "H2",
+            (38, 39): "H3",
+            (40, 45): "H4",
+            (46, 54): "Prop"
+        }
+
+        # Create ticks for the x-axis
+        ticks = []
+        for (start, end), label in x_labels.items():
+            mid = (start + end) / 2  # Position the label in the middle of the range
+            ticks.append((mid, label))
         
-        self.plot_widget.setYRange(0, 201)
+        # Set the ticks for the x-axis
+        plot_widget.getAxis('bottom').setTicks([ticks])
 
-        # Advance the event index
-        self.ith_event += 1
+        # Set y-axis range to 0-201
+        plot_widget.setLimits(yMin=0, yMax=201)
+
+
+
+
+
+    #this isn't working yet...
+    def normalize_y(self, data):
+        x_values = data[:, 0]
+        y_values = data[:, 1]
+        
+        # Get the indices where x is between 30 and 45
+        mask = (x_values >= 18) & (x_values <= 54)
+        
+        # Normalize the y-values in this range
+        y_values[mask] = 201 * (y_values[mask] - np.min(y_values[mask])) / (np.max(y_values[mask]) - np.min(y_values[mask]))
+        
+        # Return the updated data
+        return np.column_stack((x_values, y_values))
 
     def getOcc(self, hits, selectedEvents, eventID, ith_event):
         '''Gets occupancy for each detector and percentages'''
@@ -94,7 +131,9 @@ class HitDisplay(QObject):  # Inherit from QObject
         '''creates a scatter plot item of the raw hits from the detector'''
         eventIndex = np.where(self.selectedEvents[self.ith_event] == self.eventID)[0]
         # Create a scatter plot item
-        scatter = pg.ScatterPlotItem(self.detectorid[eventIndex][0], self.elementid[eventIndex][0], pen=pg.mkPen(None), symbol='o', size=10, brush=pg.mkBrush(128, 128, 128, 50))
+        data = np.column_stack((self.detectorid[eventIndex][0], self.elementid[eventIndex][0]))
+        #data = self.normalize_y(data)
+        scatter = pg.ScatterPlotItem(pos=data, pen=pg.mkPen(None), symbol='o', size=10, brush=pg.mkBrush(128, 128, 128, 50))
         return scatter
 
     def Cluster_Hit(self):
@@ -104,7 +143,9 @@ class HitDisplay(QObject):  # Inherit from QObject
         #shift detector from 0 to 1
         cluster[:,0] = cluster[:,0]+1
         # Create a scatter plot item
-        scatter = pg.ScatterPlotItem(cluster[:,0], cluster[:,1], pen=pg.mkPen(None), symbol='o', size=10, brush=pg.mkBrush(255, 255, 255, 80))
+
+        #data = self.normalize_y(cluster)
+        scatter = pg.ScatterPlotItem(pos=cluster, pen=pg.mkPen(None), symbol='o', size=10, brush=pg.mkBrush(255, 255, 255, 80))
         return scatter
 
     def Track_Hits(self):
@@ -130,7 +171,13 @@ class HitDisplay(QObject):  # Inherit from QObject
         elementid_mup = np.abs(elementid_mup)
         elementid_mum = np.abs(elementid_mum)
 
-        scatter_mup = pg.ScatterPlotItem(detectorid_mup, elementid_mup, pen=pg.mkPen(None), symbol='s', size=10, brush=pg.mkBrush(255, 0, 0, 120))
-        scatter_mum = pg.ScatterPlotItem(detectorid_mum, elementid_mum, pen=pg.mkPen(None), symbol='s', size=10, brush=pg.mkBrush(0, 255, 0, 120))
+        data_mup = np.column_stack((detectorid_mup, elementid_mup))
+        data_mum = np.column_stack((detectorid_mum, elementid_mum))
+
+        #data_mup = self.normalize_y(data_mup)
+        #data_mum = self.normalize_y(data_mum)
+
+        scatter_mup = pg.ScatterPlotItem(pos = data_mup, pen=pg.mkPen(None), symbol='s', size=10, brush=pg.mkBrush(255, 0, 0, 120))
+        scatter_mum = pg.ScatterPlotItem(pos = data_mum, pen=pg.mkPen(None), symbol='s', size=10, brush=pg.mkBrush(0, 255, 0, 120))
 
         return scatter_mup, scatter_mum
