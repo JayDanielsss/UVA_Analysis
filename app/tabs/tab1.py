@@ -13,6 +13,10 @@ from app.modules.HitDisplay import HitDisplay
 
 from app.modules.DataOrganizer import DataOrganizer
 
+from app.modules.calculations import calcVariables
+
+from app.modules.MassHisto import MassDisplay
+
 class Tab1(QWidget):
 
     def __init__(self):
@@ -74,8 +78,21 @@ class Tab1(QWidget):
         elementid, detectorid, selectedEvents, sid, hits, eventID, track = self.organizer.grab_HitInfo()
         self.hit_display_instance = HitDisplay(elementid, detectorid, selectedEvents, sid, hits, eventID, track, self.layout)
 
+    def kinematic_varibles(self):
+        """run calculations to get processed varibles"""
+        mom, sid, selected_events = self.organizer.grab_mom()
+        mass, pT, x1, x2, xF, costheta, sintheta, phi = calcVariables(mom)
+
+        #mass displays
+        self.mass_display = MassDisplay(self.layout, mass,selected_events)
+    
+    
+    
     def tab(self):
         '''Calls all displays for the tab.'''
         # Reorganize data and update displays
         self.organizer.organizeData()
         self.hit_display()
+        self.kinematic_varibles()
+
+        

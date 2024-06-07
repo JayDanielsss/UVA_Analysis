@@ -106,6 +106,7 @@ class DataOrganizer:
         
             sub_array = self.reco[15:21]
             self.mom = np.where(abs(sub_array) < 120, sub_array, 0)
+            self.mom =self.mom.T
 
             self.vtx = self.reco[:,21][self.reco[:,21]<1e6]
             self.vty = self.reco[:,22][self.reco[:,22]<1e6]
@@ -183,7 +184,7 @@ class DataOrganizer:
 
         """
     
-        return self.mom
+        return self.mom, self.sid, self.selectedEvents
     
     def grab_meta(self):
         """
