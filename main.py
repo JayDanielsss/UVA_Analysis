@@ -1,6 +1,6 @@
 #####################
 ### SpinQuest GUI ###
-###  Jay, S, M, D   ###
+###  Jay, S, M, D ###
 #####################
 
 # Native Package | sys
