@@ -14,8 +14,6 @@ from PyQt5.QtWidgets import QMainWindow,QApplication, QTabWidget
 
 from app.tabs.tab1 import Tab1
 
-
-
 from app.modules.constants import _APPLICATION_NAME, _WINDOW_MAIN_APP_WIDTH, _WINDOW_MAIN_APP_HEIGHT
 
 # from spinquest_gui.plots.StripChartsWindow import StripChartWindow
@@ -42,7 +40,6 @@ class App(QMainWindow):
         self.setGeometry(self.window_left, self.window_top, self.window_width, self.window_height)
 
         # Initalize additional UI:
-    
         self.initializeUI()
 
     def initializeUI(self):

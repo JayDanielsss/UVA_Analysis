@@ -49,6 +49,7 @@ class Tab1(QWidget):
 
         # Create an instance of dataOrganizer
         self.organizer = DataOrganizer()
+        
         # Call tab displays
         self.tab()
 
